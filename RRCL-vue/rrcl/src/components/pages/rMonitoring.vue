@@ -1,6 +1,13 @@
 <template>
     <div class="main">
         <div>
+            <Row>
+                <Col :span="24">
+                    <div id="nodes"></div>
+                </Col>
+            </Row>
+        </div>
+        <div>
             <Row :gutter="14">
                 <Col :span="12">
                     <div class="status">
@@ -69,16 +76,17 @@
                             <h3>Blocks</h3>
                             <Button type="primary" ghost>View All</Button>
                         </div>
-                        <div class="blockList">
+                        <div class="blockList" v-for="item in blocks">
                             <div class="indexItem">
                                 <div class="blockBox">
-                                    <span>Blcok<strong>6666</strong></span>
-                                    <p>000000</p>
+                                    <span>Blcok：<strong>{{item.number}}</strong></span>
+                                    <p>区块大小：<strong>{{item.size}}</strong></p>
+                                    <p>{{new Date(item.timestamp*1000).toLocaleString()}}</p>
                                 </div>
                                 <div class="blockText">
-                                    <p>666</p>
-                                    <p>666</p>
-                                    <p>666</p>
+                                    <p>交易数量：<em>{{item.transactions.length}}</em></p>
+                                    <p>打包节点：<em>{{item.signer}}</em></p>
+                                    <p>区块Hash：<em>{{item.hash}}</em></p>
                                 </div>
                             </div>
                         </div>
@@ -91,8 +99,23 @@
                             <h3>Transactions</h3>
                             <Button type="primary" ghost>View All</Button>
                         </div>
-                        <div class="tradeList">
-
+                        <div class="tradeList" v-for="item in transactions">
+                            <div class="blockNumber">
+                               <p>区块号：<em>{{item.blockNumber}}</em>&nbsp&nbsp合约标志分区：<em v-if="item.contractAddress===null">不是合约标志分区</em><em v-else>{{item.contractAddress}}</em></p>
+                            </div>
+                            <p>交易Hash：<em>{{item.hash}}</em>&nbsp&nbsp交易状态：
+                                <em v-if="item.status===true">
+                                    <Icon type="md-git-compare" color="#28d2ac"/>
+                                </em>
+                                <em v-else-if="item.status===false">
+                                    <Icon type="md-warning" color="#ff0000"/>
+                                </em>
+                                <!-- <em v-else="item.status===pending">
+                                    <Icon type="md-git-compare" color="orange"/>
+                                </em> -->
+                            </p>
+                            <p>发起者：<em>{{item.from}}</em>&nbsp&nbsp受益者：<em>{{item.to}}</em></p>
+                            <p>交易编号：<em>{{item.transactionIndex}}</em>&nbsp&nbsp交易额：<em>{{item.value}}</em></p>
                         </div>
                     </div>
                 </Col>
@@ -119,6 +142,8 @@ Vue.use(VueSocketio, socketio('http://172.16.201.189:8000/mio'));
                 pendingNum:'',
                 queuedNum:'',
                 uncleNum:'',
+                blocks:'',
+                transactions:''
             }
         },
         sockets:{ //将（socket.on）绑定事件放在sockets中
@@ -134,13 +159,18 @@ Vue.use(VueSocketio, socketio('http://172.16.201.189:8000/mio'));
             view_peerStatus: function(val){
                 this.status = val.msg.status
             },
+            view_blocks: function(val){
+                this.blocks = val.msg
+            },
             view_txpoolStatus: function(val){
                 this.pendingNum = val.msg.pending
                 this.queuedNum = val.msg.queued
             },
+            view_transactions: function(val){
+                this.transactions = val.msg
+            },
         },
         mounted() {
-            var chart = echarts.init(document.getElementById('chart'));       
             var option = {
                 tooltip : {
 	                trigger: 'axis',
@@ -228,17 +258,114 @@ Vue.use(VueSocketio, socketio('http://172.16.201.189:8000/mio'));
                     },
                 }]
             };
+            var nodeOption= {
+                title: {
+                    text: '节点监控',
+                    textStyle:{
+                        color:'#2d8cf0'
+                    }
+                },
+                tooltip: {},
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series : [
+                    {
+                        type: 'graph',
+                        layout: 'none',
+                        symbol:'rect',
+                        color:'#28d2ac',
+                        symbolSize: 50,
+                        roam: false,
+                        legendHoverLink:true, 
+                        label: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        edgeSymbol: ['circle', 'arrow'],
+                        edgeSymbolSize: [4, 10],
+                        edgeLabel: {
+                            normal: {
+                                textStyle: {
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        data: [{
+                            name: '节点1',
+                            x: 300,
+                            y: 100, 
+                            itemStyle: {
+                                color: 'red'
+                            }
+                        }, {
+                            name: '节点2',
+                            x: 800,
+                            y: 100
+                        }, {
+                            name: '节点3',
+                            x: 550,
+                            y: 50
+                        }],
+                        // links: [],
+                        links: [ {
+                            source: '节点2',
+                            target: '节点1',
+                        }, {
+                            source: '节点1',
+                            target: '节点3'
+                        }, {
+                            source: '节点2',
+                            target: '节点3'
+                        }, {
+                            source: '节点2',
+                            target: '节点1'
+                        }
+                        , {
+                            source: '节点3',
+                            target: '节点1'
+                        }
+                        , {
+                            source: '节点3',
+                            target: '节点2'
+                        }
+                        , {
+                            source: '节点1',
+                            target: '节点2'
+                        }],
+                        lineStyle: {
+                            normal: {
+                                opacity: 0.9,
+                                width: 2,
+                                curveness: 0
+                            }
+                        }
+
+                    }
+                ]
+            };
+            var chart = echarts.init(document.getElementById('chart'));
             chart.setOption(option);  
-            // this.$options.sockets.view_transactions = (data) => {
-            //     console.log(data)
-            // }
+            window.addEventListener('resize', function () {
+                chart.resize();	//自适应
+            });
+            var nodeChart = echarts.init(document.getElementById('nodes'));
+            nodeChart.setOption(nodeOption);  
+            window.addEventListener('resize', function () {
+                nodeChart.resize();	//自适应
+            })
+            this.$options.sockets.view_peerStatus = (data) => {
+                console.log(data)
+            }
         },
         created(){
             this.ChainAxios();
+
         },
         methods: {
             ChainAxios: function(val){
                 // this.$socket.emit('view_peerStatus', val);
+
             }
         }
     }
@@ -284,10 +411,14 @@ Vue.use(VueSocketio, socketio('http://172.16.201.189:8000/mio'));
 h4{
     font-size: 18px;
 }
-#chart{
+#chart,
+#nodes{
     margin-top: 10px;
     height: 290px;
     width: 100%;
+}
+#nodes{
+    height: 150px;
 }
 .dataList button{
     position: absolute;
@@ -301,13 +432,52 @@ h4{
 .blockText{
     display: inline-block;
     vertical-align: middle;
+
 }
 .blockBox{
-    height: 60px;
-    width: 100px;
-    background-color: #00ffff;
+    height: 72px;
+    width: 135px;
+    background-color: #2d8cf0;
     padding: 4px;
     text-align: center;
-    line-height: 26px;
+    line-height: 22px;
+    color: #fff;
+}
+.blockList,
+.tradeList{
+    margin: 4px 0;
+}
+.blockText em,
+.tradeList em{
+    display: inline-block;
+    vertical-align: middle;
+    width: 260px;
+    color: #1000ff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 24px;
+}
+.tradeList em{
+    width: 170px;
+}
+.indexItem,
+.tradeList{
+    position: relative;
+    color:#2d8cf0;
+    border-bottom: 2px solid #2d8cf0;
+}
+.blockNumber{
+    position: absolute;
+    bottom: 0;
+    background: #2d8cf0;
+    color: #fff;
+    display: none;
+}
+.tradeList:hover .blockNumber{
+    display: block;
+}
+.blockNumber em{
+    color: #fff;
 }
 </style>

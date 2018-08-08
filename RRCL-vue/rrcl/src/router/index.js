@@ -86,8 +86,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     //获取store里面的token
     let token = store.state.token;
-    console.log(token)
-        //判断要去的路由有没有requiresAuth
+    //判断要去的路由有没有requiresAuth
     if (to.meta.requiresAuth) {
         if (token) {
             next();

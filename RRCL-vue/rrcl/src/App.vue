@@ -16,5 +16,5 @@ html,body,#app{
   width: 100%;
   background-color: #fffed0;
 }
-
+html, body, #app, .layout, .ivu-layout{height: 100%;}
 </style>

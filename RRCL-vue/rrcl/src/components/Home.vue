@@ -58,6 +58,7 @@ export default {
 	padding: 0 15px;
 }
 .ivu-layout{
+	height: 100%;
 	background-color: inherit;
 }
 .ivu-layout .ivu-layout-sider{
@@ -66,4 +67,5 @@ export default {
 .ivu-menu-light{
 	background: inherit!important;
 }
+
 </style>

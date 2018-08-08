@@ -105,4 +105,8 @@ export default{
 .ivu-menu-light{
 	background: inherit!important;
 }
+.sider,
+.ivu-menu-vertical{
+    height: 100%;
+}
 </style>
