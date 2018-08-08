@@ -52,6 +52,7 @@ export default {
 	padding: 0 25px;
 }
 .layout{
+	height: 100%;
 	min-width: 1210px;
 }
 .ivu-layout-content{
