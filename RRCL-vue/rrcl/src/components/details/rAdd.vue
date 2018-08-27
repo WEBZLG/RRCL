@@ -11,7 +11,7 @@
                     <label for="">管理员账户</label>
                 </Col>
                 <Col :span="18">
-                    <Input v-model="value1" @on-change="value1Change"></Input>
+                    <Input v-model="value1" @on-change="value1Change" disabled></Input>
                 </Col>
             </Row>
         </div>
@@ -123,6 +123,7 @@
     top: -26px;
     left: 0;
     color: #2d8cf0;
+    display: none;
 }
 .wrapper{
     margin-top: 15px;

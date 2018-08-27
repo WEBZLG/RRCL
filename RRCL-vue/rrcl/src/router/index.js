@@ -1,10 +1,9 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
 import iView from 'iview';
-import zh from 'iview/dist/locale/zh-CN';
 import 'iview/dist/styles/iview.css';
 import store from '../store/index'
-Vue.use(iView, { zh });
+Vue.use(iView);
 Vue.use(Router)
 
 const router = new Router({
@@ -12,17 +11,35 @@ const router = new Router({
     routes: [{ path: '/', redirect: '/Login' },
         {
             path: '/Login',
-            name: 'Login',
-            component: resolve => require(['../components/Login.vue'], resolve)
+            component: resolve => require(['../components/Login.vue'], resolve),
+            children: [
+                { path: '/', redirect: '/userLogin' },
+                {
+                    path: '/emailRegistered',
+                    name: 'emailRegistered',
+                    component: resolve => require(['../components/eRegistered.vue'], resolve)
+                },
+                {
+                    path: '/phoneRegistered',
+                    name: 'phoneRegistered',
+                    component: resolve => require(['../components/pRegistered.vue'], resolve)
+                },
+                {
+                    path: '/userLogin',
+                    component: resolve => require(['../components/userLogin.vue'], resolve)
+                }
+            ]
         },
         {
-            path: '/Information',
-            name: 'Information',
-            component: resolve => require(['../components/pages/rInformation.vue'], resolve)
+            path: '/Error',
+            name: 'Error',
+            meta: { requireAuth: true, }, // 判断是否需要登录
+            component: resolve => require(['../components/pages/Error.vue'], resolve)
         },
         {
             path: '/Home',
             component: resolve => require(['../components/Home.vue'], resolve),
+            meta: { requireAuth: true, }, // 判断是否需要登录
             children: [{
                     path: '',
                     component: resolve => require(['../components/pages/rUploading.vue'], resolve)
@@ -71,19 +88,26 @@ const router = new Router({
                 {
                     path: '/ChainDetails',
                     name: 'ChainDetails',
-                    component: resolve => require(['../components/pages/rChainDetails.vue'], resolve)
+                    component: resolve => require(['../components/pages/rChainDetails.vue'], resolve),
+                },
+                {
+                    path: '/BlockTrade',
+                    name: 'BlockTrade',
+                    component: resolve => require(['../components/details/rBlcokTrade.vue'], resolve)
+                },
+                {
+                    path: '/Information',
+                    name: 'Information',
+                    meta: { requireAuth: true, }, // 判断是否需要登录
+                    component: resolve => require(['../components/pages/rInformation.vue'], resolve)
                 }
             ]
         },
-        {
-            path: '/Main',
-            name: 'Main',
-            component: resolve => require(['../components/Main.vue'], resolve)
-        }
     ]
 });
 //注册全局钩子用来拦截导航
 router.beforeEach((to, from, next) => {
+    iView.LoadingBar.start();
     //获取store里面的token
     let token = store.state.token;
     //判断要去的路由有没有requiresAuth
@@ -97,7 +121,10 @@ router.beforeEach((to, from, next) => {
             });
         }
     } else {
-        next();
+        next()
     }
 });
+router.afterEach(() => {
+    iView.LoadingBar.finish();
+})
 export default router;

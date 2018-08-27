@@ -7,7 +7,7 @@
             <Upload
                 multiple
                 type="drag"
-                action="//jsonplaceholder.typicode.com/posts/"
+                action="//"
                 :before-upload="handleUpload">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
@@ -34,7 +34,6 @@
 </script>
 
 <style scoped>
-.encrypt,
 .fileInput{
     margin-top: 15px;
 }

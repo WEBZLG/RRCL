@@ -33,7 +33,7 @@ export default {
   name: 'Home',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+			msg: 'Welcome to Your Vue.js App',
     }
   },
   components:{
@@ -56,7 +56,7 @@ export default {
 	min-width: 1210px;
 }
 .ivu-layout-content{
-	padding: 0 15px;
+	padding:15px;
 }
 .ivu-layout{
 	height: 100%;

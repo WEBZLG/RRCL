@@ -1,55 +1,15 @@
 <template>
 	<div class="sider">
-        <Menu :active-name="setActive" theme="primary"  @on-select="routeTo" accordion width="auto">
-            <Submenu name="navUploading">
+        <Menu ref="side_menu" :active-name="setActive" :open-names="[openActive]"  @on-select="routeTo" accordion width="auto">
+            <Submenu :name="item.submenu"  v-for="(item ,index) in menuData" :key="index">
                 <template slot="title">
-                        <Icon type="stats-bars"></Icon>
-                        文件上传/加密
+                        <Icon :type="item.icon" />
+                        {{item.message}}
                 </template>
-                <MenuItem name="Uploading">
-                    <Icon type="ios-paper"></Icon>
-                    文件上传/加密
+                <MenuItem :name="child.menuitem" v-for="child in item.children" :key="child.menuitem">
+                    <Icon :type="child.icon" />
+                    {{child.message}}
                 </MenuItem>
-            </Submenu>
-            <Submenu name="navImpower">
-                <template slot="title">
-                        <Icon type="stats-bars"></Icon>
-                        账户授权
-                </template>
-                <MenuItem name="Impower">
-                    <Icon type="ios-people"></Icon>
-                    账户授权
-                </MenuItem>
-            </Submenu>
-            <Submenu name="navRecord">
-                <template slot="title">
-                        <Icon type="stats-bars"></Icon>
-                        授权记录
-                </template>
-                <MenuItem name="Record">
-                        <Icon type="settings"></Icon>
-                        授权记录
-                </MenuItem>
-            </Submenu>
-            <Submenu name="navBehavior">
-                <template slot="title">
-                        <Icon type="stats-bars"></Icon>
-                        行为追踪
-                </template>
-                <MenuItem name="Behavior">
-                        <Icon type="settings"></Icon>
-                        行为追踪
-                </MenuItem>
-            </Submenu>
-            <Submenu name="Chain">
-                <template slot="title">
-                        <Icon type="stats-bars"></Icon>
-                        区块链管理
-                </template>
-                <!-- <MenuGroup> -->
-                <MenuItem name="Monitoring">监控信息</MenuItem>
-                <MenuItem name="ChainDetails">区块/交易信息</MenuItem>
-                <!-- </MenuGroup> -->
             </Submenu>
         </Menu>
 	</div>
@@ -59,8 +19,87 @@
 export default{
 	data(){
 		return {
-			page: ['Uploading','Monitoring','Behavior','Chain','Impower','Record'],
-			setActive:'Uploading'
+            setActive:'Uploading',
+            openActive:'navUploading',
+            menuData:[
+                {
+                    "submenu":"navUploading",
+                    "icon":"ios-paper",
+                    "message":"文件上传",
+                    "children":[
+                        {
+                            "menuitem":"Uploading",
+                            "icon":"ios-paper",
+                            "message":"文件上传/加密"
+                        }
+                    ]
+                },
+                {
+                    "submenu":"navImpower",
+                    "icon":"ios-people",
+                    "message":"账户授权",
+                    "children":[
+                        {
+                            "menuitem":"Impower",
+                            "icon":"ios-people",
+                            "message":"账户授权"
+                        }
+                    ]
+                },
+                {
+                    "submenu":"navRecord",
+                    "icon":"md-list-box",
+                    "message":"授权记录",
+                    "children":[
+                        {
+                            "menuitem":"Record",
+                            "icon":"md-list-box",
+                            "message":"授权记录"
+                        }
+                    ]
+                },
+                {
+                    "submenu":"navBehavior",
+                    "icon":"ios-paper-plane",
+                    "message":"行为追踪",
+                    "children":[
+                        {
+                            "menuitem":"Behavior",
+                            "icon":"ios-paper-plane",
+                            "message":"行为追踪"
+                        }
+                    ]
+                },
+                {
+                    "submenu":"allInformation",
+                    "icon":"md-mail-open",
+                    "message":"个人信息",
+                    "children":[
+                        {
+                            "menuitem":"Information",
+                            "icon":"md-mail-open",
+                            "message":"详情信息"
+                        }
+                    ]
+                },
+                {
+                    "submenu":"Chain",
+                    "icon":"md-cube",
+                    "message":"区块链管理",
+                    "children":[
+                        {
+                            "menuitem":"Monitoring",
+                            "icon":"md-pulse",
+                            "message":"监控信息"
+                        },
+                        {
+                            "menuitem":"ChainDetails",
+                            "icon":"md-repeat",
+                            "message":"区块/交易信息"
+                        }
+                    ]
+                }
+            ]
 		}
 	},
 	computed:{
@@ -80,22 +119,36 @@ export default{
 		  let path = this.$route.matched[1].path  // 获取到地址拦上#号后面的url地址
 		  if(path.indexOf('/Uploading') != -1){  // 是否包含，-1是包含，0不包含
                 this.setActive = 'Uploading'
+                this.openActive = 'navUploading'
               } else
           if(path.indexOf('/Impower') != -1){ 
                 this.setActive = 'Impower'
+                this.openActive = 'navImpower'
               } else
           if(path.indexOf('/Record') != -1){  
                 this.setActive = 'Record'
+                this.openActive = 'navRecord'
               } else
           if(path.indexOf('/Behavior') != -1){  
                 this.setActive = 'Behavior'
+                this.openActive = 'navBehavior'
               } else
           if(path.indexOf('/Monitoring') != -1){  
                 this.setActive = 'Monitoring'
+                this.openActive = 'Chain'
               } else
           if(path.indexOf('/ChainDetails') != -1){  
                 this.setActive = 'ChainDetails'
+                this.openActive = 'Chain'
+              } else
+          if(path.indexOf('/Information') != -1){  
+                this.setActive = 'Information'
+                this.openActive = 'allInformation'
               } 
+            this.$nextTick(()=>{
+                    this.$refs.side_menu.updateOpened();
+                    this.$refs.side_menu.updateActiveName()
+                })
          }
 	}
 }

@@ -1,19 +1,19 @@
 <template>
     <div>
-        <Table border :columns="columns7" :data="data6"></Table>
+        <Table border :columns="columns" :data="data"></Table>
         <Page :total="100" show-elevator></Page>
     </div>
 </template>
 <script>
 import axios from 'axios'
-import Add from '../content/rAdd.vue'
+import Add from './rAdd.vue'
 
     export default {
         data () {
             return {
                 v1:'',
                 v2:'',
-                columns7: [
+                columns: [
                     {
                         title: 'Name',
                         key: 'name',
@@ -81,7 +81,7 @@ import Add from '../content/rAdd.vue'
                                     },
                                     on: {
                                         click: () => {
-                                            this.remove(params.index)
+                                            this.getDownload(params.index)
                                         }
                                     }
                                 }, '下载'),
@@ -103,7 +103,7 @@ import Add from '../content/rAdd.vue'
                         }
                     }
                 ],
-                data6: [
+                data: [
                     {
                         name: 'John Brown',
                         age: 28,
@@ -134,15 +134,42 @@ import Add from '../content/rAdd.vue'
             this.getData()
         },
         methods: {
+            // 详情
             show (index) {
                 this.$Modal.info({
                     title: 'User Info',
-                    content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
+                    content: `Name：${this.data[index].name}<br>Age：${this.data[index].age}<br>Address：${this.data[index].address}`
                 })
             },
-            remove (index) {
-                this.data6.splice(index, 1);
+            // 下载
+            getDownload (index) {
+                axios({
+                    method: 'post',
+                    url: 'api/user/',
+                    data: {
+                        id:index
+                    },
+                    responseType: 'blob'
+                }).then(response => {
+                    this.download(response)
+                }).catch((error) => {
+
+                })
             },
+                // 下载文件
+            download (data) {
+                if (!data) {
+                    return
+                }
+                let url = window.URL.createObjectURL(new Blob([data]))
+                let link = document.createElement('a')
+                link.style.display = 'none'
+                link.href = url
+                link.setAttribute('download', 'excel.xlsx')
+                document.body.appendChild(link)
+                link.click()
+            },
+            // 获取列表数据
             getData (){
                 axios.get('/user', {
                     params: {
@@ -156,6 +183,7 @@ import Add from '../content/rAdd.vue'
                     console.log(error);
                 });
             },
+            // 授权弹窗
             openModal() {
                 this.$Modal.confirm({
                     scrollable:true,
