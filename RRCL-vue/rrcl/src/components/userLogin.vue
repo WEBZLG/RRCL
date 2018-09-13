@@ -3,13 +3,13 @@
         <transition name="fade">
           <div class="loginBox">
             <h2>滚石唱片影音授权系统</h2>
-            <FormItem  prop="loginusername">
-              <Input v-model="loginformValidate.loginusername"  type="text" placeholder="可用手机号、邮箱、用户名登录">
+            <FormItem  prop="username">
+              <Input v-model="loginformValidate.username"  type="text" placeholder="可用手机号、邮箱、用户名登录">
                 <Icon type="ios-contact-outline" slot="prepend"/>
               </Input>
             </FormItem>
-            <FormItem  prop="loginpassword">
-              <Input v-model="loginformValidate.loginpassword"  type="password" placeholder="密码">
+            <FormItem  prop="password">
+              <Input v-model="loginformValidate.password"  type="password" placeholder="密码">
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
               </Input>
             </FormItem>
@@ -32,10 +32,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import axios from "../axios.js";
 export default {
   data() {
-    var loginusername = function(rule, value, callback) {
+    var username = function(rule, value, callback) {
       var phonenum = /^1[3-8][0-9]{9}$/;
       var username = /^[a-zA-Z0-9_]{4,16}$/;
       var email = /^((([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})[; ,])*(([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})))$/;
@@ -51,7 +52,7 @@ export default {
         return callback(new Error("用户名格式不正确"));
       }
     };
-    var loginpassword = function(rule, value, callback) {
+    var password = function(rule, value, callback) {
       if (value === "") {
         callback(new Error("请输入密码"));
       } else if (!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/.test(value)) {
@@ -84,22 +85,22 @@ export default {
 
     return {
       loginformValidate: {
-        loginusername: "",
-        loginpassword: ""
+        username: "",
+        password: ""
       },
 
       loginRules: {
-        loginusername: [
+        username: [
           {
-            validator: loginusername,
+            validator: username,
             required: true,
             trigger: "blur",
             message: "手机号、邮箱、用户名登录"
           }
         ],
-        loginpassword: [
+        password: [
           {
-            validator: loginpassword,
+            validator: password,
             required: true,
             trigger: "blur",
             min: 6,
@@ -117,33 +118,58 @@ export default {
       this.$router.push({ path: "/phoneRegistered" });
     },
     loginSubmit(name) {
+      // this.$Spin.show();
+      var param = this.loginformValidate
       this.$refs[name].validate(valid => {
         if (valid) {
-          axios.userLogin(this.ruleForm).then(({ data }) => {
-            //账号不存在
-            if (data.info === false) {
-              this.$message({
-                type: "info",
-                message: "账号不存在"
-              });
-              return;
-            }
-            //账号存在
-            if (data.success) {
-              this.$message({
-                type: "success",
-                message: "登录成功"
-              });
+          var param = new URLSearchParams()
+          param.append('username',this.loginformValidate.username)
+          param.append('password',this.loginformValidate.password)
+          this.$axios.post('/rock/sso/login.action',param)
+            .then((res)=> {
+              console.log(res)
+              if (res.data.code === 0) {
+                Vue.prototype.$Message.info('登录成功！');
               //拿到返回的token和username，并存到store
-              let token = data.token;
-              let username = data.username;
-              this.$store.dispatch("UserLogin", token);
-              this.$store.dispatch("UserName", username);
+              // let token = data.token;
+              // let username = data.username;
+              // this.$store.dispatch("UserLogin", token);
+              // this.$store.dispatch("UserName", username);
               //跳到目标页
               this.$router.push("/Home");
+              } else if (res.data.code === -1) {
+                Vue.prototype.$Message.error('登录失败!'+res.data.msg);
+              }
+            })
+            .catch(function(error) {
+              Vue.prototype.$Message.error('提交失败！');
+              });
             }
-          });
-        }
+          // axios.userLogin(param).then(({ res }) => {
+          //   console.log(res)
+          //   //账号存在
+          //   if (res.data.code === 0) {
+          //     this.$Spin.hide();
+          //     Vue.prototype.$Message.info('登录成功！');;
+          //     //拿到返回的token和username，并存到store
+          //     let token = data.token;
+          //     let username = data.username;
+          //     this.$store.dispatch("UserLogin", token);
+          //     this.$store.dispatch("UserName", username);
+          //     //跳到目标页
+          //     this.$router.push("/Home");
+          //   }else if(res.data.code === -1){
+          //     //账号不存在
+          //     this.$Spin.hide();
+          //     Vue.prototype.$Message.error('注册失败!'+res.data.msg);;
+          //     return;
+          //   }
+          // });
+        // }else{
+        //   this.$Spin.hide();
+        //   Vue.prototype.$Message.error('注册失败！');;
+        // }
+        
       });
     }
   }
@@ -166,6 +192,7 @@ h2 {
   top: 20%;
   left: 35%;
   padding: 20px;
+  border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.3);
 }
 

@@ -1,8 +1,8 @@
 <template>
     <div class="fileUploading">
-        <div class="encrypt">
+        <!-- <div class="encrypt">
             <Button type="primary">视频加密</Button>
-        </div>
+        </div> -->
         <div class="fileInput">
             <Upload
                 multiple

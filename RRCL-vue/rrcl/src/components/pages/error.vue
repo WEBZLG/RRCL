@@ -1,7 +1,7 @@
 <template>
     <div class="error">
         <h1>哎呀！出错了！</h1>
-        <button type="button" @click="goHome()">返回首页</button>
+        <button type="button" @click="goHome()">重新登录</button>
     </div>
 </template>
 <script>
@@ -13,7 +13,7 @@ export default {
     },
     methods:{
         goHome:function(){
-            this.$router.replace({path:'/Uploading',redirect:{name:"Uploading"}})
+            this.$router.replace({path:'/Login'})
         }
     }
 }

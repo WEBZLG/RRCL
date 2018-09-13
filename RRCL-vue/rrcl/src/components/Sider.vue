@@ -19,8 +19,8 @@
 export default{
 	data(){
 		return {
-            setActive:'Uploading',
-            openActive:'navUploading',
+            setActive:'',
+            openActive:'',
             menuData:[
                 {
                     "submenu":"navUploading",
@@ -72,13 +72,30 @@ export default{
                 },
                 {
                     "submenu":"allInformation",
-                    "icon":"md-mail-open",
-                    "message":"个人信息",
+                    "icon":"ios-information-circle",
+                    "message":"信息管理",
                     "children":[
                         {
                             "menuitem":"Information",
+                            "icon":"ios-information-circle-outline",
+                            "message":"补全信息"
+                        },
+                        {
+                            "menuitem":"PersonInfor",
+                            "icon":"md-information",
+                            "message":"个人信息"
+                        }
+                    ]
+                },
+                {
+                    "submenu":"allCheck",
+                    "icon":"md-mail-open",
+                    "message":"审核管理",
+                    "children":[
+                        {
+                            "menuitem":"ApplyList",
                             "icon":"md-mail-open",
-                            "message":"详情信息"
+                            "message":"申请列表"
                         }
                     ]
                 },
@@ -137,6 +154,10 @@ export default{
                 this.setActive = 'Monitoring'
                 this.openActive = 'Chain'
               } else
+          if(path.indexOf('/ApplyList') != -1){  
+                this.setActive = 'ApplyList'
+                this.openActive = 'allCheck'
+              } else
           if(path.indexOf('/ChainDetails') != -1){  
                 this.setActive = 'ChainDetails'
                 this.openActive = 'Chain'
@@ -144,7 +165,11 @@ export default{
           if(path.indexOf('/Information') != -1){  
                 this.setActive = 'Information'
                 this.openActive = 'allInformation'
-              } 
+              } else
+        if(path.indexOf('/PersonInfor') != -1){  
+                this.setActive = 'PersonInfor'
+                this.openActive = 'allInformation'
+            }
             this.$nextTick(()=>{
                     this.$refs.side_menu.updateOpened();
                     this.$refs.side_menu.updateActiveName()

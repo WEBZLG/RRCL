@@ -6,29 +6,17 @@ import router from './router'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import store from './store'
-import VueParticles from 'vue-particles'
+import VueParticles from 'vue-particles' //登录注册背景
 import $ from 'jquery'
+import Axios from 'axios'
 import 'vue2-animate/dist/vue2-animate.min.css'
+Vue.prototype.$axios = Axios
+Axios.defaults.baseURL = '/api'
+Axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 Vue.use(VueParticles)
-    // message 配置
-iView.Message.config({
-        top: 50,
-        duration: 1.5
-    })
-    // notice 配置
-iView.Notice.config({
-        top: 50,
-        duration: 3
-    })
-    // LoadingBar 配置
-iView.LoadingBar.config({
-    // color: '#5cb85c',
-    // failedColor: '#f0ad4e',
-    height: 3
-})
 Vue.use(iView);
 Vue.config.productionTip = false;
-
 
 /* eslint-disable no-new */
 new Vue({

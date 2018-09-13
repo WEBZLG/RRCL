@@ -49,9 +49,7 @@
         <div>
             <Row :gutter="14">
                 <Col :span="12">
-                  <!-- <div v-for="item in peerStatus">
-                    
-                  </div> -->
+                  <div class="addNode"><Button @click="openModal()">添加节点</Button></div>
                   <div id="nodeChart"></div>
                 </Col>
                 <Col :span="12">
@@ -121,6 +119,7 @@ import echarts from "echarts";
 import VueSocketio from "vue-socket.io";
 import socketio from "socket.io-client";
 import "../../assets/js/number.css";
+import addNode from "../details/addNode";
 Vue.use(VueSocketio, socketio("http://172.16.201.189:8000/mio"));
 export default {
   data() {
@@ -137,8 +136,9 @@ export default {
       timer: null,
       nodePeer: "",
       nodeStatus: "",
-      nodeObject:{},
-      nodeLinks:[],
+      nodeObject: {},
+      nodeLinks: [],
+      linkPeer:'',
       cityList: [
         {
           value: "30000",
@@ -171,26 +171,31 @@ export default {
     },
     // 区块链信息
     view_chainInfo: function(val) {
-      this.peerStatus=[];
-      this.nodeData=[];
+      this.peerStatus = [];
+      this.nodeData = [];
       this.peerStatus = Object.keys(val.msg.peers);
       this.setNumber($("#dataNums1"), val.msg.blockNumber);
       this.setNumber($("#dataNums2"), val.msg.uncleCount);
       this.setNumber($("#dataNums3"), val.msg.transactionCount);
       this.setNumber($("#dataNums4"), val.msg.addressCount);
-      // this.peerStatus =["jie1","jie2",'jie3','jie4','jie5','jie6']
-      console.log(this.peerStatus)
+      // this.peerStatus = ["jie1", "jie2", "jie3", "jie4", "jie5", "jie6"];
       for (var i in this.peerStatus) {
         this.nodeObject = { name: this.peerStatus[i] };
         this.nodeData.push(this.nodeObject);
       }
-      if(this.peerStatus.length>1){
-        for(var i = 0; i< this.peerStatus.length ;i++){
-          if(i>=this.peerStatus.length-1){
-            this.nodeLinks.push({source:this.peerStatus[i],target:this.peerStatus[0]})
-          }else{
-            this.nodeLinks.push({source:this.peerStatus[i],target:this.peerStatus[i+1]})
-            }
+      if (this.peerStatus.length > 1) {
+        for (var i = 0; i < this.peerStatus.length; i++) {
+          if (i >= this.peerStatus.length - 1) {
+            this.nodeLinks.push({
+              source: this.peerStatus[i],
+              target: this.peerStatus[0]
+            });
+          } else {
+            this.nodeLinks.push({
+              source: this.peerStatus[i],
+              target: this.peerStatus[i + 1]
+            });
+          }
         }
       }
       this.nodeCharts();
@@ -199,15 +204,15 @@ export default {
     view_peerStatus: function(val) {
       this.nodePeer = val.msg.peer;
       this.nodeStatus = val.msg.status;
-      for(var i in this.nodeData){
-        if(this.nodeData[i].name === this.nodePeer){
-          if(this.nodeStatus==='normal'){
-            this.nodeData[i].itemStyle={'color':'#2d8cf0'}
-          }else{
-            this.nodeData[i].itemStyle={'color':'#fbb900'}
+      for (var i in this.nodeData) {
+        if (this.nodeData[i].name === this.nodePeer) {
+          if (this.nodeStatus === "normal") {
+            this.nodeData[i].itemStyle = { color: "#2d8cf0" };
+          } else {
+            this.nodeData[i].itemStyle = { color: "#fbb900" };
           }
-        }else{
-          this.nodeData[i].itemStyle={'color':'#2d8cf0'}
+        } else {
+          this.nodeData[i].itemStyle = { color: "#2d8cf0" };
         }
       }
       this.nodeCharts();
@@ -218,7 +223,7 @@ export default {
     },
     // 单个块信息及交易信息
     view_block: function(val) {
-            // console.log(val)
+      // console.log(val)
       this.blocks.pop();
       this.transactions.pop();
       this.blocks.unshift(val.msg.block);
@@ -252,6 +257,9 @@ export default {
       this.array = [];
     }
   },
+  components:{
+    addNode
+    },
   mounted() {
     // clearInterval(this.timer)
     // 节点监控
@@ -293,10 +301,18 @@ export default {
         obj.animate({ backgroundPositionY: y + "px" }, 500);
       }
     },
+    // 交易走势
     getTrade() {
       this.$socket.emit("getChainInfo", "");
       var myDate = new Date();
       this.array.push(myDate.toLocaleString());
+    },
+    // 添加节点
+    addPeer(data){
+      var item ={
+        "link":data
+      }
+      this.$socket.emit("addPeer", item);
     },
     echarts() {
       var option = {
@@ -322,6 +338,8 @@ export default {
         },
         yAxis: {
           name: "差值",
+          minInterval: 1,
+          boundaryGap : [ 0, 0.1 ],
           splitLine: {
             show: true,
             lineStyle: {
@@ -344,7 +362,9 @@ export default {
       };
 
       var chart = echarts.init(document.getElementById("chart"));
+      chart.showLoading();
       chart.setOption(option);
+      chart.hideLoading();
       window.onresize = function() {
         //重置容器高宽
         chart.resize();
@@ -367,13 +387,14 @@ export default {
             layout: "circular",
             symbolSize: 50,
             roam: false,
-            symbol: "rect",
+            // symbol:"image://../../../assets/computer.png",
             label: {
               normal: {
-                show: true
+                show: true,
+                 position:'bottom'
               }
             },
-            edgeSymbol: ["circle", "arrow"],
+            edgeSymbol: ["circle"],
             edgeSymbolSize: [4, 10],
             edgeLabel: {
               normal: {
@@ -385,8 +406,8 @@ export default {
             // itemStyle: {
             //   color: "#2d8cf0"
             // },
-            data:this.nodeData,
-            links:this.nodeLinks,
+            data: this.nodeData,
+            links: this.nodeLinks,
             lineStyle: {
               normal: {
                 opacity: 0.9,
@@ -398,7 +419,9 @@ export default {
         ]
       };
       var chart = echarts.init(document.getElementById("nodeChart"));
+      chart.showLoading();
       chart.setOption(options);
+      chart.hideLoading();
       window.onresize = function() {
         //重置容器高宽
         chart.resize();
@@ -412,6 +435,36 @@ export default {
     refresh: function() {
       clearInterval(this.timer);
       this.setTimer();
+    },
+    // 授权弹窗
+    openModal() {
+      this.$Modal.confirm({
+        scrollable: true,
+        okText: "保存",
+        render: h => {
+          return h(addNode, {
+            props: {},
+            on: {
+              value: value => {
+                this.linkPeer = value;
+              }
+            }
+          });
+        },
+        onOk: () => {
+          if (this.linkPeer == "") {
+            this.$Message.error("请输入IP+端口!");
+          } else {
+            console.log(this.linkPeer)
+            this.addPeer(this.linkPeer)
+            // const msg = this.$Message.loading({
+            //   content: "正在保存..",
+            //   duration: 0
+            // }); 
+          }
+          // this.saveLink(msg)
+        }
+      });
     }
   }
 };
@@ -664,5 +717,14 @@ h4 {
   top: 15px;
   right: 60px;
   z-index: 999;
+}
+.addNode {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 999;
+}
+.addNode .ivu-btn-default {
+  background-color: inherit;
 }
 </style>

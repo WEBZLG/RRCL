@@ -29,9 +29,8 @@
                         <Col :span="17">
                             <Input v-model="ruleForm.validateCode" type="text" placeholder="请输入收到的验证码"></Input>
                         </Col>
-                        <Col :span="6" :offset="1">
-                            <Button type="primary" @click="getValidate('ruleForm')">{{validateName}}</Button>
-                        </Col>
+                        <Button type="primary" v-show="showBtn" class="checkBtn" @click="getCode()">发送验证码</Button>
+                        <Button type="primary" v-show="!showBtn" class="checkBtn count">{{count}}</Button>
                     </Row>
                 </FormItem>
                 <Checkbox v-model="single">同意滚石产品协议</Checkbox>
@@ -40,7 +39,7 @@
                     <Button type="success" long @click="jump()">返回登录</Button>
                     </Col>
                     <Col :span="12">
-                    <Button type="primary" long @click="handleSubmit()">注册</Button>
+                    <Button type="primary" long @click="handleSubmit('ruleForm')">注册</Button>
                     </Col>
                 </Row>
                 </div>
@@ -49,6 +48,7 @@
     </div>
 </template>
 <script>
+import axios from "../axios.js";
 export default {
   data() {
     var username = (rule, value, callback)=> {
@@ -116,6 +116,9 @@ export default {
     return {
       validateName: '获取验证码',
       single: true,
+      showBtn: true,
+      count:'',
+      timer:null,
       ruleForm: {
         pass: '',
         checkPass: '',
@@ -187,43 +190,21 @@ export default {
         });
     },
     // 手机验证码定时器
-    setTimeDown() {
-      if (countDown === 0) {
-        this.validateDisabled = false
-        this.validateName = '重新获取'
-        countDown = 60
-        return
-      } else {
-        this.validateDisabled = true
-        this.validateName = countDown + 's'
-        countDown--
+    getCode:function(){
+     const TIME_COUNT = 60;
+     if (!this.timer) {
+       this.count = TIME_COUNT;
+       this.showBtn = false;
+       this.timer = setInterval(() => {
+       if (this.count > 0 && this.count <= TIME_COUNT) {
+         this.count--;
+        } else {
+         this.showBtn = true;
+         clearInterval(this.timer);
+         this.timer = null;
+        }
+       }, 1000)
       }
-      const _self = this
-      this.timer = setTimeout(() => {
-        _self.setTimeDown()
-      }, 1000)
-    },
-    getValidate (name) {
-      if (this.validateDisabled) {
-        return
-      }
-      if (countDown >= 60) {
-          const _self = this
-          this.$http.get(`/v1/sms/` + this.loginForm.phone, null).then(data => {
-          _self.$message({
-              showClose: true,
-              message: '发送验证码成功',
-              type: 'sucess'
-          })
-          }).catch(errMsg => {
-              _self.$message({
-                  showClose: true,
-                  message: errMsg,
-                  type: 'error'
-              })
-          })
-      }
-      this.setTimeDown()
     }
   }
 };
@@ -234,5 +215,8 @@ export default {
 }
 .codeNum .ivu-form-item-error-tip{
     top: 63%;
+}
+.checkBtn{
+    float: right;
 }
 </style>

@@ -9,14 +9,8 @@
                     <Icon type="ios-contact" slot="prepend"/>
                     </Input>
                 </FormItem>
-                <FormItem prop="email">
-                    <Input v-model="ruleForm.email" type="text" placeholder="E-mail">
-                    <Icon type="md-mail" slot="prepend"/>
-                    </Input>
-                </FormItem>
-
-                <FormItem prop="pass">
-                    <Input v-model="ruleForm.pass"  type="password"  placeholder="设置密码">
+                <FormItem prop="pwd">
+                    <Input v-model="ruleForm.pwd"  type="password"  placeholder="设置密码">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
@@ -25,23 +19,28 @@
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
-                <FormItem prop="validateCode" class="codeNum">
+                <FormItem prop="email" class="vaildCode">
                     <Row>
                         <Col :span="17">
-                            <Input v-model="ruleForm.validateCode" type="text" placeholder="请输入验证码"></Input>
+                        <Input v-model="ruleForm.email" type="text" placeholder="E-mail">
+                          <Icon type="md-mail" slot="prepend"/>
+                        </Input>
                         </Col>
                         <Col :span="6" :offset="1">
-                            <Button type="primary" @click="getValidate('ruleForm')">{{validateName}}</Button>
+                          <Button type="primary" class="checkBtn" @click="getCode()">发送验证码</Button>
                         </Col>
                     </Row>
+                </FormItem>
+                <FormItem prop="vaildCode">
+                    <Input v-model="ruleForm.vaildCode" type="text" placeholder="验证码"></Input>
                 </FormItem>
                 <Checkbox v-model="single">同意滚石产品协议</Checkbox>
                 <Row :gutter="12">
                     <Col :span="12">
-                    <Button type="success" long @click="jump()">返回登录</Button>
+                        <Button type="success" long @click="jump()">返回登录</Button>
                     </Col>
                     <Col :span="12">
-                    <Button type="primary" long @click="handleSubmit('ruleForm')">注册</Button>
+                        <Button type="primary" long @click="handleSubmit('ruleForm')">注册</Button>
                     </Col>
                 </Row>
                 </div>
@@ -50,137 +49,181 @@
     </div>
 </template>
 <script>
+// import axios from "../axios.js";
+import Vue from 'vue'
 export default {
   data() {
-    var username = (rule, value, callback)=> {
-                if (value === '') {
-                    callback(new Error('请输入用户名'));
-                } else if(!/^[a-zA-Z0-9_]{4,16}$/.test(value)){
-                    return callback(new Error("用户名由4到16位（字母，数字，下划线）组成"))
-                } else{
-                callback();
-                }
-            };
-    var pass =(rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请输入密码'));
-                } else {
-                    if (this.ruleForm.checkPass !== '') {
-                        this.$refs.ruleForm.validateField('checkPass');
-                    }else if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/.test(value)){
-                        return callback(new Error("密码由6-16字母和数字组成，不能是纯数字或纯英文"))
-                    }else{
-                        callback();
-                        }
-                    }
-                };
-    var checkPass = (rule, value, callback)=> {
-                if (value === '') {
-                    return callback(new Error('请再次输入密码'));
-                } else if(value !== this.ruleForm.pass) {
-                    return callback(new Error("密码不一致"))
-                } else {
-                    callback();
-                }
-            };
-    var email =(rule, value, callback)=> {
-                if (value === '') {
-                    callback(new Error('请输入邮箱'));
-                } else if(!/^((([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})[; ,])*(([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})))$/.test(value)){
-                    return callback(new Error("请输入邮箱"))
-                } else{
-                callback();
-                }
-            };
-    var validateCode =(rule, value, callback)=> {
-                if (value === '') {
-                    callback(new Error('请输入验证码'));
-                } else if(!/^[0-9]*$/.test(value)){
-                    return callback(new Error("请输入正确验证码"))
-                } else{
-                callback();
-                }
-            };
+    var username = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入用户名"));
+      } else if (!/^[a-zA-Z0-9_]{4,16}$/.test(value)) {
+        return callback(new Error("用户名由4到16位（字母，数字，下划线）组成"));
+      } else {
+        callback();
+      }
+    };
+    var pwd = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else if (!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/.test(value)) {
+        return callback(
+          new Error("密码由6-16字母和数字组成，不能是纯数字或纯英文")
+        );
+      } else {
+        if (this.ruleForm.checkPass !== "") {
+          // 对第二个密码框单独验证
+          this.$refs.ruleForm.validateField("checkPass");
+        }
+        callback();
+      }
+    };
+    var checkPass = (rule, value, callback) => {
+      if (value === "") {
+        return callback(new Error("请再次输入密码"));
+      } else if (value !== this.ruleForm.pwd) {
+        return callback(new Error("密码不一致"));
+      } else {
+        callback();
+      }
+    };
+    var email = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入邮箱"));
+      } else if (
+        !/^((([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})[; ,])*(([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})))$/.test(
+          value
+        )
+      ) {
+        return callback(new Error("请输入邮箱"));
+      } else {
+        callback();
+      }
+    };
     return {
-      validateName: '获取验证码',
-      single: true,   
+      single: true,
       ruleForm: {
-        pass: '',
-        checkPass: '',
-        email:'',
-        validateCode:'',
-        username:''
+        pwd: "",
+        checkPass: "",
+        email: "",
+        username: "",
+        vaildCode: ""
       },
       rules: {
-        username:[{
-            validator:username,
+        username: [
+          {
+            validator: username,
             required: true,
             trigger: "blur"
-        }],
-        pass: [
+          }
+        ],
+        pwd: [
           {
-            validator:pass,
+            validator: pwd,
             required: true,
             trigger: "blur",
-            min:6
+            min: 6
           }
         ],
         checkPass: [
           {
-            validator:checkPass,
+            validator: checkPass,
             required: true,
             trigger: "blur"
           }
         ],
         email: [
           {
-            validator:email,
+            validator: email,
             required: true,
             trigger: "blur"
           }
         ],
-        validateCode: [
+        vaildCode: [
           {
-            validator:validateCode,
             required: true,
-            trigger: "blur"
+            trigger: "blur",
+            message: "请输入验证码"
           }
         ]
       }
-    }
+    };
   },
   methods: {
-      jump:function(){
-        this.$router.push({ path: '/userLogin'})
-      },
+    jump: function() {
+      this.$router.push({ path: "/userLogin" });
+    },
+    getCode: function() {
+      let param = new URLSearchParams()
+      param.append('email',this.ruleForm.email)
+      this.$axios.post('/rock/user/checkEmail.action',param)
+          .then((res)=> {
+            console.log("邮箱"+res)
+              if(res.data.code===0){
+                this.$Message.info('发送成功！');
+              }else if(res.data.code===-1){
+                this.$Message.error('发送失败！');
+              }
+          })
+    },
     handleSubmit(name) {
-        this.$refs[name].validate(valid => {
-            if (valid) {
-                axios.userRegister(this.ruleForm)
-                .then(({}) => {
-                    if (data.success) {
-                        this.$message({
-                        type: 'success',
-                        message: '注册成功'
-                        });
-                    } else {
-                        this.$message({
-                        type: 'info',
-                        message: '用户名已经存在'
-                        });
-                    }
-                })
-            }
-        });
+      this.$refs[name].validate(valid => {
+        if (valid) {
+           console.log(valid)
+          var param = new URLSearchParams()
+          param.append('userName',this.ruleForm.username)
+          param.append('pwd',this.ruleForm.pwd)
+          param.append('email',this.ruleForm.email)
+          param.append('vaildCode',this.ruleForm.vaildCode)
+          // var param ={
+          //   "username":this.ruleForm.username,
+          //   "pwd":this.ruleForm.pwd,
+          //   "email":this.ruleForm.email,
+          //   "validCode":this.ruleForm.vaildCode
+          // }
+          console.log(param)
+          this.$axios.post('/rock/user/register.action',param)
+            .then((res)=> {
+              console.log(res)
+              if (res.data.code === 0) {
+                this.$Message.info('注册成功！');
+                this.$router.push({ path: "/userLogin" });
+              } else if (res.data.code === -1) {
+                this.$Message.error('注册失败!'+res.data.msg);
+              }
+            })
+            .catch(function(error) {
+              Vue.prototype.$Message.error('提交失败！');
+              });
+          // axios.userRegister(this.ruleForm)
+          //     .then(({}) => {
+          //         if (data.success) {
+          //             this.$message({
+          //             type: 'success',
+          //             message: '注册成功'
+          //             });
+          //         } else {
+          //             this.$message({
+          //             type: 'info',
+          //             message: '用户名已经存在'
+          //             });
+          //         }
+          //     })
+        } else {
+          this.$Message.error("填写数据错误!");
+        }
+      });
     }
   }
 };
 </script>
 <style>
-.codeNum.ivu-form-item{
-    margin-bottom: 0
+.vaildCode.ivu-form-item {
+  margin-bottom: 0;
 }
-.codeNum .ivu-form-item-error-tip{
-    top: 63%;
+.vaildCode .ivu-form-item-error-tip {
+  top: 63%;
+}
+.checkBtn {
+  float: right;
 }
 </style>

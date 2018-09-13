@@ -33,19 +33,25 @@ const router = new Router({
         {
             path: '/Error',
             name: 'Error',
-            meta: { requireAuth: true, }, // 判断是否需要登录
+            meta: { requireAuth: true }, // 判断是否需要登录
             component: resolve => require(['../components/pages/Error.vue'], resolve)
         },
         {
             path: '/Home',
+            meta: { requireAuth: true }, // 判断是否需要登录
             component: resolve => require(['../components/Home.vue'], resolve),
-            meta: { requireAuth: true, }, // 判断是否需要登录
             children: [{
                     path: '',
-                    component: resolve => require(['../components/pages/rUploading.vue'], resolve)
+                    component: resolve => require(['../components/pages/rMain.vue'], resolve)
+                },
+                {
+                    path: '/Main',
+                    name: "Main",
+                    component: resolve => require(['../components/pages/rMain.vue'], resolve)
                 },
                 {
                     path: '/Uploading',
+                    name: "Uploading",
                     component: resolve => require(['../components/pages/rUploading.vue'], resolve)
                 },
                 {
@@ -96,10 +102,21 @@ const router = new Router({
                     component: resolve => require(['../components/details/rBlcokTrade.vue'], resolve)
                 },
                 {
+                    path: '/ApplyList',
+                    name: 'ApplyList',
+                    component: resolve => require(['../components/pages/rApplyList.vue'], resolve)
+                },
+                {
                     path: '/Information',
                     name: 'Information',
-                    meta: { requireAuth: true, }, // 判断是否需要登录
+                    meta: { requireAuth: true }, // 判断是否需要登录
                     component: resolve => require(['../components/pages/rInformation.vue'], resolve)
+                },
+                {
+                    path: '/PersonInfor',
+                    name: 'PersonInfor',
+                    meta: { requireAuth: true }, // 判断是否需要登录
+                    component: resolve => require(['../components/pages/rPersonInfor.vue'], resolve)
                 }
             ]
         },
@@ -107,24 +124,23 @@ const router = new Router({
 });
 //注册全局钩子用来拦截导航
 router.beforeEach((to, from, next) => {
-    iView.LoadingBar.start();
-    //获取store里面的token
-    let token = store.state.token;
-    //判断要去的路由有没有requiresAuth
-    if (to.meta.requiresAuth) {
-        if (token) {
-            next();
-        } else {
-            next({
-                path: '/Login',
-                query: { redirect: to.fullPath } // 将刚刚要去的路由path作为参数，方便登录成功后直接跳转到该路由
-            });
-        }
-    } else {
-        next()
-    }
-});
+    // iView.Spin.show();
+    // if (to.matched.some(res => res.meta.requireAuth)) { // 判断该路由是否需要登录权限
+    //     if (store.state.token) { // 通过vuex state获取当前的token是否存在
+    //         next();
+    //     } else {
+    //         next({
+    //             path: '/login',
+    //             query: { redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+    //         })
+    //     }
+    // } else {
+    //     next();
+    // }
+    next()
+
+})
 router.afterEach(() => {
-    iView.LoadingBar.finish();
+    // iView.Spin.hide();
 })
 export default router;

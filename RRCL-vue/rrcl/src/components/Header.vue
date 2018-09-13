@@ -17,11 +17,6 @@
 							</a>
 							<DropdownMenu slot="list">
 									<DropdownItem>
-										<a href="javascript:void(0)">
-											个人信息
-										</a>
-									</DropdownItem>
-									<DropdownItem>
 										<a href="javascript:void(0)" @click="logout">
 											退出登录
 										</a>
@@ -38,7 +33,6 @@
 import Vue from 'vue'
 import axios from "../axios.js";
 export default {
-  name: "HelloWorld",
   data() {
     return {
       users: ""
@@ -60,19 +54,13 @@ export default {
   },
   methods: {
     logout() {
-	  //清除token
-      this.$store.dispatch("UserLogout");
-      if (!this.$store.state.token) {
-        this.$router.push("/Login");
-        this.$message({
-          type: "success",
-          message: "注销成功"
-        });
+    //清除token
+      var that = this;
+      that.$store.dispatch("UserLogout");
+      if (!that.$store.state.token) {
+        that.$router.push("/Login");
       } else {
-        this.$message({
-          type: "info",
-          message: "注销失败"
-        });
+        console.log("失败")
       }
     }
   }

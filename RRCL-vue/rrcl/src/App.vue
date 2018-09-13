@@ -46,4 +46,15 @@ html,body,#app{
 .ivu-select-selection{
   background: inherit;
 }
+/* .information .ivu-tabs-nav{
+    margin-left: 40px;
+} */
+.information .ivu-input,
+.information .ivu-btn-default{
+    background-color: inherit;
+    color: #2d8cf0;
+}
+.ivu-radio-inner{
+  background-color: inherit;
+}
 </style>
