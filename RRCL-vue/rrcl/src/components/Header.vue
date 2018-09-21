@@ -12,7 +12,7 @@
 					<Avatar src="http://www.qqzhi.com/uploadpic/2015-01-15/202249542.jpg" />
 					<Dropdown trigger="click" style="margin-left: 20px">
 							<a href="javascript:void(0)">
-									欢迎管理员！
+									欢迎 <strong>{{admin}}</strong>！
 									<Icon type="arrow-down-b"></Icon>
 							</a>
 							<DropdownMenu slot="list">
@@ -31,14 +31,16 @@
 
 <script>
 import Vue from 'vue'
-import axios from "../axios.js";
+// import axios from "../axios.js";
 export default {
   data() {
     return {
-      users: ""
+      users: "",
+      admin:"",
     };
   },
   created() {
+    this.admin = this.$store.state.user;
     // axios.getUser().then(response => {
 	// 	console.log(123)
     //   if (response.status === 401) {
@@ -88,5 +90,11 @@ h3 {
   display: inline-block;
   vertical-align: middle;
   font-size: 20px;
+}
+.headLogo{
+  text-align: right;
+}
+.ivu-dropdown-item{
+  text-align: center;
 }
 </style>

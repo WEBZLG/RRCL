@@ -387,7 +387,7 @@ export default {
             layout: "circular",
             symbolSize: 50,
             roam: false,
-            // symbol:"image://../../../assets/computer.png",
+            // symbol:"image:///../../assets/computer.png",
             label: {
               normal: {
                 show: true,

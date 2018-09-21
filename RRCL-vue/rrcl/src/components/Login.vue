@@ -81,5 +81,7 @@ h2{
   background-color: inherit;
   color: #fff;
 }
-
+.information .ivu-input-type .ivu-input-icon-normal + .ivu-input,.information .ivu-input{
+    color: #2d8cf0
+}
 </style>

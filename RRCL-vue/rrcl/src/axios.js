@@ -1,6 +1,6 @@
 //axios.js
 import axios from 'axios'
-import store from './store'
+import store from './store/index'
 import router from './router'
 //创建axios实例
 var instance = axios.create({

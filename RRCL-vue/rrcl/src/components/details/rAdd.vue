@@ -61,6 +61,16 @@
                 </Col>
             </Row>
         </div>
+        <div class="wrapper">
+            <Row>
+                <Col :span="6">
+                    <label for="">授予播放日期</label>
+                </Col>
+                <Col :span="18">
+                    <DatePicker type="date" placeholder="选择日期"></DatePicker>
+                </Col>
+            </Row>
+        </div>
     </Row>
 </template>
 <script>

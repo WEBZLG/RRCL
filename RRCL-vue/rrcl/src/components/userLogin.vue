@@ -13,7 +13,7 @@
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
               </Input>
             </FormItem>
-            <Button type="primary" long @click="loginSubmit('loginformValidate')">登录</Button>
+            <Button type="primary" :loading = "buttonLoading" long @click="loginSubmit('loginformValidate')">{{butText}}</Button>
             <Row>
               <Col :span="8">
                 <a href="#" class="register" @click="jumpEmail()">邮箱注册</a>
@@ -33,7 +33,8 @@
 
 <script>
 import Vue from 'vue'
-import axios from "../axios.js";
+import store from '../store/index'
+// import axios from "../axios.js";
 export default {
   data() {
     var username = function(rule, value, callback) {
@@ -84,6 +85,8 @@ export default {
     };
 
     return {
+      buttonLoading:false,
+      butText:"登录",
       loginformValidate: {
         username: "",
         password: ""
@@ -119,17 +122,27 @@ export default {
     },
     loginSubmit(name) {
       // this.$Spin.show();
+      this.buttonLoading = true;
+      this.butText = "Loading"
       var param = this.loginformValidate
       this.$refs[name].validate(valid => {
         if (valid) {
           var param = new URLSearchParams()
           param.append('username',this.loginformValidate.username)
           param.append('password',this.loginformValidate.password)
-          this.$axios.post('/rock/sso/login.action',param)
+          this.$axios.post('http://172.16.201.189:8083/rock/sso/login.action',param,{
+            xhrFields: {
+                  withCredentials: true
+            }
+          })
             .then((res)=> {
               console.log(res)
               if (res.data.code === 0) {
                 Vue.prototype.$Message.info('登录成功！');
+                this.$store.commit('SET_TOKEN', res.data.userInfo.userId)
+                this.$store.commit('GET_USER', res.data.userInfo.userName)
+                this.buttonLoading = false;
+                this.butText = "登录"
               //拿到返回的token和username，并存到store
               // let token = data.token;
               // let username = data.username;
@@ -139,10 +152,14 @@ export default {
               this.$router.push("/Home");
               } else if (res.data.code === -1) {
                 Vue.prototype.$Message.error('登录失败!'+res.data.msg);
+                this.buttonLoading = false;
+                this.butText = "登录"
               }
             })
             .catch(function(error) {
               Vue.prototype.$Message.error('提交失败！');
+              // this.buttonLoading = false;
+              // this.butText = "登录"
               });
             }
           // axios.userLogin(param).then(({ res }) => {
@@ -165,17 +182,19 @@ export default {
           //     return;
           //   }
           // });
-        // }else{
-        //   this.$Spin.hide();
-        //   Vue.prototype.$Message.error('注册失败！');;
-        // }
+        else{
+          // this.$Spin.hide();
+          Vue.prototype.$Message.error('请填写账户信息！');
+          this.buttonLoading = false;
+          this.butText = "登录"
+        }
         
       });
     }
   }
 };
 </script>
-<style>
+<style scoped>
 h2 {
   text-align: center;
   color: #fff;

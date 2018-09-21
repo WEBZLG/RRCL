@@ -1,20 +1,24 @@
 <template>
     <div class="addInfo">
         <Form ref="formValidate" :model="formValidate" label-position="left" :label-width="100" :rules="ruleValidate">
-            <FormItem label="姓名" prop="name">
-                <Input v-model="formValidate.name"></Input>
+            <FormItem label="姓名" prop="realname">
+                <Input v-model="formValidate.realname"></Input>
             </FormItem>
             <FormItem label="身份证号" prop="idcard">
                 <Input v-model="formValidate.idcard"></Input>
             </FormItem>
-            <FormItem label="证件照" prop="idcardimg">
+            <FormItem label="">
                 <div>
                     <Upload
-                        :before-upload="handleUpload"
-                        action="//">
+                        ref="file"
+                        :with-credentials= true
+                        :on-success="uploadSuccessId"
+                        :on-error="uploadError"
+                        name="file"
+                        action="http://172.16.201.189:8083/rock/file/upload.action"
+                        >
                         <Button icon="ios-cloud-upload-outline">上传身份证照片</Button>
                     </Upload>
-                    <div v-if="file !== null">Upload file: {{ file.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : '上传文件' }}</Button></div>
                 </div>
             </FormItem>
             <FormItem prop="birthdate" label="出生日期">
@@ -35,6 +39,9 @@
             <FormItem label="Email" prop="email">
                 <Input v-model="formValidate.email"></Input>
             </FormItem>
+            <FormItem label="联系地址" prop="address">
+                <Input v-model="formValidate.address"></Input>
+            </FormItem>
             <!-- <FormItem label="QQ">
                 <Input v-model="formValidate.qq"></Input>
             </FormItem>
@@ -42,7 +49,11 @@
                 <Input v-model="formValidate.weixin"></Input>
             </FormItem> -->
             <FormItem label="选择企业/公司" prop="selectValue">
-                <Cascader v-model="formValidate.selectValue" :data="selectData" filterable></Cascader>
+                <Select v-model="formValidate.selectValue" placeholder="Select your city">
+                    <Option value="beijing">New York</Option>
+                    <Option value="shanghai">London</Option>
+                    <Option value="shenzhen">Sydney</Option>
+                </Select>
             </FormItem>
             <FormItem label="用户级别" prop="level">
                 <RadioGroup v-model="formValidate.level">
@@ -59,28 +70,30 @@
     </div>
 </template>
 <script>
+import Vue from 'vue'
     export default {
         data () {
             return {
-                file: null,
-                loadingStatus: false,
-                data:"",
+                credentials: true,
                 btnDis:false,
+                idcardimg:'',
+                userId:'',
                 formValidate: {
-                    selectValue:[],
-                    name: '',
+                    selectValue:'',
+                    realname: '',
                     sex: '',
                     idcard:'',
                     birthdate:'',
                     age: '',
                     call:'',
                     email:'',
+                    address:'',
                     // qq:'',
                     // weixin:'',
                     level:'',
                 },
                 ruleValidate: {
-                    name: [
+                    realname: [
                         { required: true, message: '用户名不能为空', trigger: 'blur' }
                     ],
                     idcard: [
@@ -95,81 +108,80 @@
                     sex: [
                         { required: true, message: '请选择性别', trigger: 'blur' }
                     ],
-                    // company: [
-                    //     { required: true, message: '公司名称不能为空', trigger: 'blur' }
-                    // ],
-                    // qualification: [
-                    //     { required: true, message: '公司资质不能为空', trigger: 'blur' },
-                    // ],
                     call: [
                         { required: true, message: '联系电话不能为空', trigger: 'blur' },
                     ],
                     email: [
                         { required: true, message: '邮箱不能为空', trigger: 'blur' }
                     ],
-                    idcardimg: [
-                        { required: true, message: '证件不能为空', trigger: 'blur' }
-                    ]
-                },
-                selectData:[{
-                    value: 'beijing',
-                    label: '北京'
-                }, {
-                    value: 'jiangsu',
-                    label: '江苏'
-                }]
+                    selectValue: [
+                        { required: true, message: '企业/公司不能为空', trigger: 'change' }
+                    ],
+                    address: [
+                        { required: true, message: '地址不能为空', trigger: 'blur' }
+                    ],
+                    level: [
+                        { required: true, message: '请选择用户级别', trigger: 'blur' }
+                    ],
+                }
             }
+        },
+        created(){
+            this.userId = this.$store.state.token;
         },
         methods: {
             handleSubmit (name) {
+                var that = this;
                 this.$refs[name].validate((valid) => {
-                    // if (valid) {
-                    // console.log(valid)
-                    // var param = new URLSearchParams()
-                    // param.append('userId',this.formValidate.name)
-                    // param.append('email',this.formValidate.email)
-                    // param.append('realName',this.formValidate.realName)
-                    // param.append('idcard',this.formValidate.idcard)
-                    // param.append('idcardPhoto',this.formValidate.idcardPhoto)
-                    // param.append('addr',this.formValidate.address)
-                    // param.append('birthday',this.formValidate.birthdate)
-                    // param.append('sex',this.formValidate.sex)
-                    // param.append('level',this.formValidate.level)
-                    // param.append('companyInfo',this.formValidate.selectValue)
-                    // this.$axios.post('/rock/auth/submitInfo',param)
-                    //     .then(function(res) {
-                    //     console.log(res)
-                    //     if (res.data.code === 0) {
-                    //         Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
-                    //         this.btnDis = true;
-                    //     //跳到目标页
-                    //     this.$router.push("/Home");
-                    //     } else if (res.data.code === -1) {
-                    //         Vue.prototype.$Message.error('提交失败!'+res.data.msg);
-                    //     }
-                    //     })
-                    //     .catch(function(error) {
-                    //     Vue.prototype.$Message.error('提交失败！');
-                    //     });
-                    // } else {
-                    //     this.$Message.error('请填写完整信息!');
-                    // }
+                    if (valid) {
+                    console.log(valid)
+                    var param = new URLSearchParams()
+                    param.append('userId',this.userId)
+                    param.append('email',this.formValidate.email)
+                    param.append('realName',this.formValidate.realname)
+                    param.append('idcard',this.formValidate.idcard)
+                    param.append('idcardPhoto',this.idcardimg)
+                    param.append('addr',this.formValidate.address)
+                    param.append('phone',this.formValidate.call)
+                    param.append('birthdayStr',this.formValidate.birthdate)
+                    param.append('sex',this.formValidate.sex)
+                    param.append('level',this.formValidate.level)
+                    param.append('companyInfo.name',this.formValidate.selectValue)
+                    this.$axios.post('http://172.16.201.189:8083/rock/auth/submitInfo.action',param,{
+                            xhrFields: {
+                                withCredentials: true
+                            }          
+                        })
+                        .then(function(res) {
+                        console.log(res)
+                        if (res.data.code === 0) {
+                            that.btnDis = true;
+                            Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
+                        //跳到目标页
+                        that.$router.push("/Home");
+                        return false;
+                        } else if (res.data.code === -1) {
+                            Vue.prototype.$Message.error('提交失败!'+res.data.msg);
+                        }
+                        })
+                        .catch(function(error) {
+                        Vue.prototype.$Message.error('提交失败！'+error);
+                        });
+                    } else {
+                        this.$Message.error('请填写完整信息!');
+                    }
                 })
             },
             handleReset (name) {
                 this.$refs[name].resetFields();
             },
-            handleUpload (file) {
-                this.file = file;
-                return false;
+            uploadSuccessId(res, file){
+                this.$Message.info('上传成功！');
+                this.cardImg = res.path
             },
-            upload () {
-                this.loadingStatus = true;
-                setTimeout(() => {
-                    this.file = null;
-                    this.loadingStatus = false;
-                    this.$Message.success('Success')
-                }, 1500);
+            uploadError(res, file){
+                console.log(res,file)
+                this.$Message.error('上传失败！'+res.data.msg);
             }
         } 
     }

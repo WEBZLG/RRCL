@@ -5,20 +5,24 @@
             <Tabs>
                 <TabPane label="企业/公司认证" icon="ios-people">
                     <Form ref="formValidate" :model="formValidate" label-position="left" :label-width="100" :rules="ruleValidate">
-                        <FormItem label="姓名" prop="name">
-                            <Input v-model="formValidate.name"></Input>
+                        <FormItem label="姓名" prop="realname">
+                            <Input v-model="formValidate.realname"></Input>
                         </FormItem>
                         <FormItem label="身份证号" prop="idcard">
                             <Input v-model="formValidate.idcard"></Input>
                         </FormItem>
-                        <FormItem label="证件照" prop="idcardimg">
+                        <FormItem label=" " >
                             <div>
-                                <!-- <Upload
-                                    :before-upload="handleUploadCard"
-                                    action="//">
+                                <Upload
+                                    ref="file"
+                                    :with-credentials= true
+                                    :on-success="uploadSuccessId"
+                                    :on-error="uploadError"
+                                    name="file"
+                                    action="http://172.16.201.189:8083/rock/file/upload.action"
+                                    >
                                     <Button icon="ios-cloud-upload-outline">上传身份证照片</Button>
                                 </Upload>
-                                <div v-if="fileCard !== null">Upload file: {{ fileCard.name }} <Button type="text" @click="uploadCard" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : '上传文件' }}</Button></div> -->
                             </div>
                         </FormItem>
                         <FormItem prop="birthdate" label="出生日期">
@@ -36,11 +40,11 @@
                         <FormItem label="公司名称" prop="company">
                             <Input v-model="formValidate.company"></Input>
                         </FormItem>
-                        <FormItem label="公司资质" prop="qualification">
+                        <FormItem label="">
                             <div>
                                 <Upload
                                     ref="file"
-                                    :before-upload="handleUploadCp"
+                                    :with-credentials= true
                                     :on-success="uploadSuccess"
                                     :on-error="uploadError"
                                     name="file"
@@ -48,8 +52,10 @@
                                     >
                                     <Button icon="ios-cloud-upload-outline">上传公司资质文件</Button>
                                 </Upload>
-                                <div v-if="file !== null">Upload file: {{ file.name }}</div>
                             </div>
+                        </FormItem>
+                        <FormItem label="联系地址" prop="Address">
+                            <Input v-model="formValidate.Address"></Input>
                         </FormItem>
                         <FormItem label="联系电话" prop="call">
                             <Input v-model="formValidate.call"></Input>
@@ -80,18 +86,20 @@
     </div>
 </template>
 <script>
+import Vue from 'vue'
 import addInfo from '../details/addInfo'
 import addInfo2 from '../details/addInfo2'
     export default {
         data () {
             return {
-                fileCard: null,
-                file: null,
-                loadingStatus: false,
-                data:"",
+                credentials: true,
+                userId:'',
+                cardImg:'',
+                companyImg:'',
                 btnDis:false,
                 formValidate: {
-                    name: '',
+                    realname: '',
+                    Address:'',
                     sex: '',
                     idcard:'',
                     birthdate:'',
@@ -102,10 +110,10 @@ import addInfo2 from '../details/addInfo2'
                     email:'',
                     // qq:'',
                     // weixin:'',
-                    level:''
+                    level:'2'
                 },
                 ruleValidate: {
-                    name: [
+                    realname: [
                         { required: true, message: '用户名不能为空', trigger: 'blur' }
                     ],
                     idcard: [
@@ -123,55 +131,70 @@ import addInfo2 from '../details/addInfo2'
                     company: [
                         { required: true, message: '公司名称不能为空', trigger: 'blur' }
                     ],
-                    qualification: [
-                        { required: true, message: '公司资质不能为空', trigger: 'blur' },
+                    Address: [
+                        { required: true, message: '联系地址不能为空', trigger: 'blur' }
                     ],
+                    // qualification: [
+                    //     {required:true}
+                    //     // { required: true, message: '公司资质不能为空', trigger: 'blur' },
+                    // ],
                     call: [
                         { required: true, message: '联系电话不能为空', trigger: 'blur' },
                     ],
                     email: [
                         { required: true, message: '邮箱不能为空', trigger: 'blur' }
                     ],
-                    idcardimg: [
-                        { required: true, message: '证件不能为空', trigger: 'blur' }
-                    ]
+                    // idcardimg: [
+                    //     {required:true}
+                    //     // { required: true, message: '证件不能为空', trigger: 'blur' }
+                    // ]
                 }
             }
         },
         components:{
             addInfo,addInfo2
         },
+        created(){
+            this.userId = this.$store.state.token;
+        },
         methods: {
             handleSubmit (name) {
+                var that = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                      console.log(valid)
                     var param = new URLSearchParams()
-                    param.append('userId',this.formValidate.name)
+                    param.append('userId',this.userId)
                     param.append('email',this.formValidate.email)
-                    param.append('realName',this.formValidate.realName)
+                    param.append('realName',this.formValidate.realname)
                     param.append('idcard',this.formValidate.idcard)
-                    param.append('idcardPhoto',this.formValidate.idcardPhoto)
-                    param.append('addr',this.formValidate.address)
-                    param.append('birthday',this.formValidate.birthdate)
+                    param.append('phone',this.formValidate.call)
+                    param.append('idcardPhoto',this.cardImg)
+                    param.append('addr',this.formValidate.Address)
+                    param.append('birthdayStr',this.formValidate.birthdate)
                     param.append('sex',this.formValidate.sex)
                     param.append('level',this.formValidate.level)
                     param.append('companyInfo.name',this.formValidate.company)
-                    param.append('companyInfo.apt',this.formValidate.qualification)
-                    this.$axios.post('/rock/auth/submitInfo',param)
+                    param.append('companyInfo.apt',this.companyImg)
+
+                    this.$axios.post('http://172.16.201.189:8083/rock/auth/submitInfo.action',param,{
+                            xhrFields: {
+                                withCredentials: true
+                            }          
+                        })
                         .then(function(res) {
                         console.log(res)
                         if (res.data.code === 0) {
+                            that.btnDis = true;
                             Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
-                            this.btnDis = true;
                         //跳到目标页
-                        this.$router.push("/Home");
+                        that.$router.push("/Home");
                         } else if (res.data.code === -1) {
                             Vue.prototype.$Message.error('提交失败!'+res.data.msg);
                         }
                         })
                         .catch(function(error) {
-                        Vue.prototype.$Message.error('提交失败！');
+                        Vue.prototype.$Message.error('提交失败！'+error);
                         });
                     } else {
                         this.$Message.error('请填写完整信息!');
@@ -181,40 +204,17 @@ import addInfo2 from '../details/addInfo2'
             handleReset (name) {
                 this.$refs[name].resetFields();
             },
-            handleUploadCard (file) {
-                this.fileCard = file;
-                return false;
-            },
-            handleUploadCp (file) {
-                this.file = file;
-                console.log(this.file.name)
-                // return false;
-            },
-            uploadCard () {
-                this.loadingStatus = true;
-                console.log(this.file)
-                setTimeout(() => {
-                    this.fileCard = null;
-                    this.loadingStatus = false;
-                    this.$Message.success('Success')
-                }, 1500);
-            },
-            uploadCp () {
-                this.loadingStatus = true;
-                console.log(this.file)
-                setTimeout(() => {
-                    this.file = null;
-                    this.loadingStatus = false;
-                    this.$Message.success('Success')
-                }, 1500);
-            },
             uploadSuccess(res, file){
-                console.log(res,file)
-                console.log("success")
+                this.$Message.info('上传成功！');
+                this.companyImg = res.path
+            },
+            uploadSuccessId(res, file){
+                this.$Message.info('上传成功！');
+                this.cardImg = res.path
             },
             uploadError(res, file){
                 console.log(res,file)
-                console.log("faile")
+                this.$Message.error('上传失败！'+res.data.msg);
             }
         } 
     }

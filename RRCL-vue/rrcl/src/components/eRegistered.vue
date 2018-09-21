@@ -27,7 +27,7 @@
                         </Input>
                         </Col>
                         <Col :span="6" :offset="1">
-                          <Button type="primary" class="checkBtn" @click="getCode()">发送验证码</Button>
+                          <Button type="primary" :loading = "buttonLoading" class="checkBtn" @click="getCode()">{{butText}}</Button>
                         </Col>
                     </Row>
                 </FormItem>
@@ -40,7 +40,7 @@
                         <Button type="success" long @click="jump()">返回登录</Button>
                     </Col>
                     <Col :span="12">
-                        <Button type="primary" long @click="handleSubmit('ruleForm')">注册</Button>
+                        <Button type="primary" long :loading = "RbuttonLoading" @click="handleSubmit('ruleForm')">{{registerText}}</Button>
                     </Col>
                 </Row>
                 </div>
@@ -100,7 +100,11 @@ export default {
       }
     };
     return {
+      buttonLoading:false,
+      RbuttonLoading:false,
       single: true,
+      butText:"获取验证码",
+      registerText:"注册",
       ruleForm: {
         pwd: "",
         checkPass: "",
@@ -153,46 +157,60 @@ export default {
       this.$router.push({ path: "/userLogin" });
     },
     getCode: function() {
+      this.buttonLoading = true;
+      this.butText = "Loading"
       let param = new URLSearchParams()
       param.append('email',this.ruleForm.email)
-      this.$axios.post('/rock/user/checkEmail.action',param)
+      this.$axios.post('http://172.16.201.189:8083/rock/user/checkEmail.action',param,{
+            xhrFields: {
+                  withCredentials: true
+            }
+          })
           .then((res)=> {
             console.log("邮箱"+res)
               if(res.data.code===0){
                 this.$Message.info('发送成功！');
+                this.buttonLoading = false;
+                this.butText = "获取验证码"
               }else if(res.data.code===-1){
                 this.$Message.error('发送失败！');
+                this.buttonLoading = false;
+                this.butText = "获取验证码"
               }
           })
     },
     handleSubmit(name) {
+      this.RbuttonLoading = true;
+      this.registerText = "Loading"
       this.$refs[name].validate(valid => {
         if (valid) {
-           console.log(valid)
           var param = new URLSearchParams()
           param.append('userName',this.ruleForm.username)
           param.append('pwd',this.ruleForm.pwd)
           param.append('email',this.ruleForm.email)
           param.append('vaildCode',this.ruleForm.vaildCode)
-          // var param ={
-          //   "username":this.ruleForm.username,
-          //   "pwd":this.ruleForm.pwd,
-          //   "email":this.ruleForm.email,
-          //   "validCode":this.ruleForm.vaildCode
-          // }
-          console.log(param)
-          this.$axios.post('/rock/user/register.action',param)
+          this.$axios.post('http://172.16.201.189:8083/rock/user/register.action',param,{
+            xhrFields: {
+                  withCredentials: true
+            }
+          })
             .then((res)=> {
               console.log(res)
               if (res.data.code === 0) {
                 this.$Message.info('注册成功！');
                 this.$router.push({ path: "/userLogin" });
+                this.RbuttonLoading = false;
+                this.registerText = "注册"
               } else if (res.data.code === -1) {
                 this.$Message.error('注册失败!'+res.data.msg);
+                this.RbuttonLoading = false;
+                this.registerText = "注册"
               }
             })
             .catch(function(error) {
               Vue.prototype.$Message.error('提交失败！');
+              this.RbuttonLoading = false;
+              this.registerText = "注册"
               });
           // axios.userRegister(this.ruleForm)
           //     .then(({}) => {
@@ -210,6 +228,8 @@ export default {
           //     })
         } else {
           this.$Message.error("填写数据错误!");
+          this.RbuttonLoading = false;
+          this.registerText = "注册"
         }
       });
     }

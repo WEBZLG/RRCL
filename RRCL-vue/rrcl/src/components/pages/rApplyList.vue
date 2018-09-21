@@ -12,7 +12,7 @@
             @on-ok="reject()">
             <p>请确认是否驳回申请</p>
         </Modal>
-        <Table border :columns="columns" :data="data"></Table>
+        <Table :loading="loading" :columns="columns" :data="data" stripe></Table>
         <Page :total="100" show-elevator></Page>
     </div>
 </template>
@@ -21,33 +21,55 @@ import Vue from 'vue'
 export default {
   data() {
     return {
+      loading: true,
       modal: false,
       modal1: false,
       postuserId: "",
-      dataList: [],
       columns: [
-        {
-          title: "用户ID",
-          key: "userId"
-        },
+        // {
+        //   title: "用户ID",
+        //   key: "userId",
+        //   width:100
+        // },
         {
           title: "用户名",
-          key: "userName"
+          key: "userName",
+          width:120
         },
         {
           title: "姓名",
-          key: "realName"
+          key: "realName",
+          width:120
+        },
+        {
+          title: "性别",
+          key: "sex",
+          width:70
+        },
+        {
+          title: "用户级别",
+          key: "level",
+          width:120
+        },
+        {
+          title: "审核状态",
+          key: "level",
+          width:100
+        },
+        {
+          title: "联系电话",
+          key: "phone"
+        },
+        {
+          title: "Email",
+          key: "email"
         },
         {
           title: "联系地址",
           key: "addr"
         },
         {
-          title: "所属公司",
-          key: "companyInfo.id"
-        },
-        {
-          title: "Action",
+          title: "操作",
           key: "action",
           width: 150,
           align: "center",
@@ -93,33 +115,8 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          realName: "John",
-          userName: "John Brown",
-          userId: 28,
-          addr: "New York No. 1 Lake Park"
-        },
-        {
-          realName: "John",
-          userName: "Jim Green",
-          userId: 27,
-          addr: "London No. 1 Lake Park"
-        },
-        {
-          realName: "John",
-          userName: "Joe Black",
-          userId: 26,
-          addr: "Sydney No. 1 Lake Park"
-        },
-        {
-          realName: "John",
-          userName: "Jon Snow",
-          userId: 25,
-          addr: "Ottawa No. 2 Lake Park"
-        }
-      ]
-    };
+      data:[]
+    }
   },
   created() {
     this.getDate();
@@ -137,12 +134,19 @@ export default {
       this.data.splice(index, 1);
     },
     getDate() {
-      this.$axios.get("/rock/auth/authList.action").then(res => {
+      var that = this
+      this.$axios.get("http://172.16.201.189:8083/rock/auth/authList.action",{},{
+            xhrFields: {
+                withCredentials: true
+            }          
+        })
+        .then(res => {
         console.log(res);
         if (res.data.code === 0) {
-          this.dataList = [];
+          that.data = res.data.users;
+          that.loading = false;
         } else if (res.data.code === -1) {
-          this.$Message.error("获取数据失败!" + res.data.msg);
+          that.$Message.error("获取数据失败!" + res.data.msg);
         }
       })
       .catch(function(error) {
@@ -154,7 +158,11 @@ export default {
       var param = new URLSearchParams();
       param.append("userId", this.postuserId);
       param.append("status", 2);
-      this.$axios.post("/rock/auth/auditing.action", param).then(function(res) {
+      this.$axios.post("http://172.16.201.189:8083/rock/auth/auditing.action", param,{
+            xhrFields: {
+                withCredentials: true
+            }          
+        }).then(function(res) {
         if (res.data.code === 0) {
           Vue.prototype.$Message.info("提交成功");
         } else if (res.data.code === -1) {
@@ -170,7 +178,11 @@ export default {
       var param = new URLSearchParams();
       param.append("userId", this.postuserId);
       param.append("status", 3);
-      this.$axios.post("/rock/auth/auditing.action", param).then(function(res) {
+      this.$axios.post("http://172.16.201.189:8083/rock/auth/auditing.action", param,{
+            xhrFields: {
+                withCredentials: true
+            }          
+        }).then(function(res) {
         if (res.data.code === 0) {
           Vue.prototype.$Message.info("提交成功");
         } else if (res.data.code === -1) {

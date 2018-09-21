@@ -78,7 +78,7 @@ export default{
                         {
                             "menuitem":"Information",
                             "icon":"ios-information-circle-outline",
-                            "message":"补全信息"
+                            "message":"补充信息"
                         },
                         {
                             "menuitem":"PersonInfor",
