@@ -50,8 +50,8 @@
 </template>
 <script>
 // import axios from "../axios.js";
-import Vue from 'vue'
 export default {
+  inject:["reload"],
   data() {
     var username = (rule, value, callback) => {
       if (value === "") {
@@ -100,6 +100,7 @@ export default {
       }
     };
     return {
+      imgsrc:domain.testUrl,
       buttonLoading:false,
       RbuttonLoading:false,
       single: true,
@@ -157,11 +158,12 @@ export default {
       this.$router.push({ path: "/userLogin" });
     },
     getCode: function() {
+      var that = this
       this.buttonLoading = true;
       this.butText = "Loading"
       let param = new URLSearchParams()
       param.append('email',this.ruleForm.email)
-      this.$axios.post('http://172.16.201.189:8083/rock/user/checkEmail.action',param,{
+      this.$axios.post(this.imgsrc+'/rock/user/checkEmail.action',param,{
             xhrFields: {
                   withCredentials: true
             }
@@ -169,17 +171,18 @@ export default {
           .then((res)=> {
             console.log("邮箱"+res)
               if(res.data.code===0){
-                this.$Message.info('发送成功！');
-                this.buttonLoading = false;
-                this.butText = "获取验证码"
+                that.$Message.info('发送成功！');
+                that.buttonLoading = false;
+                that.butText = "获取验证码"
               }else if(res.data.code===-1){
-                this.$Message.error('发送失败！');
-                this.buttonLoading = false;
-                this.butText = "获取验证码"
+                that.$Message.error('发送失败！');
+                that.buttonLoading = false;
+                that.butText = "获取验证码"
               }
           })
     },
     handleSubmit(name) {
+      var that = this
       this.RbuttonLoading = true;
       this.registerText = "Loading"
       this.$refs[name].validate(valid => {
@@ -189,7 +192,7 @@ export default {
           param.append('pwd',this.ruleForm.pwd)
           param.append('email',this.ruleForm.email)
           param.append('vaildCode',this.ruleForm.vaildCode)
-          this.$axios.post('http://172.16.201.189:8083/rock/user/register.action',param,{
+          this.$axios.post(this.imgsrc+'/rock/user/register.action',param,{
             xhrFields: {
                   withCredentials: true
             }
@@ -197,35 +200,22 @@ export default {
             .then((res)=> {
               console.log(res)
               if (res.data.code === 0) {
-                this.$Message.info('注册成功！');
-                this.$router.push({ path: "/userLogin" });
-                this.RbuttonLoading = false;
-                this.registerText = "注册"
+                that.$Message.info('注册成功！');
+                that.$router.push({ path: "/userLogin" });
+                that.RbuttonLoading = false;
+                that.reload();
+                that.registerText = "注册"
               } else if (res.data.code === -1) {
-                this.$Message.error('注册失败!'+res.data.msg);
-                this.RbuttonLoading = false;
-                this.registerText = "注册"
+                that.$Message.error('注册失败!'+res.data.msg);
+                that.RbuttonLoading = false;
+                that.registerText = "注册"
               }
             })
             .catch(function(error) {
-              Vue.prototype.$Message.error('提交失败！');
-              this.RbuttonLoading = false;
-              this.registerText = "注册"
+              that.$Message.error('提交失败！');
+              that.RbuttonLoading = false;
+              that.registerText = "注册"
               });
-          // axios.userRegister(this.ruleForm)
-          //     .then(({}) => {
-          //         if (data.success) {
-          //             this.$message({
-          //             type: 'success',
-          //             message: '注册成功'
-          //             });
-          //         } else {
-          //             this.$message({
-          //             type: 'info',
-          //             message: '用户名已经存在'
-          //             });
-          //         }
-          //     })
         } else {
           this.$Message.error("填写数据错误!");
           this.RbuttonLoading = false;

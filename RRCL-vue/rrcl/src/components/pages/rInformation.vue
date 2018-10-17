@@ -19,14 +19,14 @@
                                     :on-success="uploadSuccessId"
                                     :on-error="uploadError"
                                     name="file"
-                                    action="http://172.16.201.189:8083/rock/file/upload.action"
+                                    :action="action1"
                                     >
                                     <Button icon="ios-cloud-upload-outline">上传身份证照片</Button>
                                 </Upload>
                             </div>
                         </FormItem>
                         <FormItem prop="birthdate" label="出生日期">
-                            <DatePicker type="date" placeholder="选择日期" v-model="formValidate.birthdate"></DatePicker>
+                            <DatePicker type="date" placeholder="选择日期" :value="formValidate.birthdate" @on-change="birthdateValue"></DatePicker>
                         </FormItem>
                         <FormItem label="性别" prop="sex">
                             <RadioGroup v-model="formValidate.sex">
@@ -40,6 +40,7 @@
                         <FormItem label="公司名称" prop="company">
                             <Input v-model="formValidate.company"></Input>
                         </FormItem>
+
                         <FormItem label="">
                             <div>
                                 <Upload
@@ -48,11 +49,16 @@
                                     :on-success="uploadSuccess"
                                     :on-error="uploadError"
                                     name="file"
-                                    action="http://172.16.201.189:8083/rock/file/upload.action"
+                                    :action="action2"
                                     >
                                     <Button icon="ios-cloud-upload-outline">上传公司资质文件</Button>
                                 </Upload>
                             </div>
+                        </FormItem>
+                        <FormItem label="选择已有公司" prop="company">
+                            <Select v-model="formValidate.company" placeholder="请选择您所属的公司">
+                                <Option  v-for="item in companyList" :key="item.id" :value="item.name">{{item.name}}</Option>
+                            </Select>
                         </FormItem>
                         <FormItem label="联系地址" prop="Address">
                             <Input v-model="formValidate.Address"></Input>
@@ -90,13 +96,18 @@ import Vue from 'vue'
 import addInfo from '../details/addInfo'
 import addInfo2 from '../details/addInfo2'
     export default {
+        inject:["reload"],
         data () {
             return {
+                imgsrc:domain.testUrl,
                 credentials: true,
                 userId:'',
                 cardImg:'',
                 companyImg:'',
                 btnDis:false,
+                companyList:'',
+                action1:domain.testUrl+'/rock/file/upload.action',
+                action2:domain.testUrl+'/rock/file/upload.action',
                 formValidate: {
                     realname: '',
                     Address:'',
@@ -120,7 +131,7 @@ import addInfo2 from '../details/addInfo2'
                         { required: true, message: '身份证号不能为空', trigger: 'blur' }
                     ],
                     birthdate: [
-                        { required: true,  type: 'date', message: '出生日期不能为空', trigger: 'change' }
+                        { required: true,  type: 'string', message: '出生日期不能为空', trigger: 'change' }
                     ],
                     age: [
                         { required: true, message: '年龄不能为空', trigger: 'blur' }
@@ -156,13 +167,19 @@ import addInfo2 from '../details/addInfo2'
         },
         created(){
             this.userId = this.$store.state.token;
+            this.getCompany()
         },
         methods: {
+            birthdateValue(e){
+                console.log(e)
+                this.formValidate.birthdate = e
+            },
             handleSubmit (name) {
                 var that = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                      console.log(valid)
+                    
                     var param = new URLSearchParams()
                     param.append('userId',this.userId)
                     param.append('email',this.formValidate.email)
@@ -170,14 +187,16 @@ import addInfo2 from '../details/addInfo2'
                     param.append('idcard',this.formValidate.idcard)
                     param.append('phone',this.formValidate.call)
                     param.append('idcardPhoto',this.cardImg)
+                    // param.append('idcardPhoto','http://172.16.201.189:8080/propath/1539237841.jpg')
+                    
                     param.append('addr',this.formValidate.Address)
                     param.append('birthdayStr',this.formValidate.birthdate)
                     param.append('sex',this.formValidate.sex)
                     param.append('level',this.formValidate.level)
                     param.append('companyInfo.name',this.formValidate.company)
                     param.append('companyInfo.apt',this.companyImg)
-
-                    this.$axios.post('http://172.16.201.189:8083/rock/auth/submitInfo.action',param,{
+                    // param.append('companyInfo.apt','http://172.16.201.189:8080/propath/1539237841.jpg')
+                    this.$axios.post(this.imgsrc+'/rock/auth/submitInfo.action',param,{
                             xhrFields: {
                                 withCredentials: true
                             }          
@@ -188,18 +207,39 @@ import addInfo2 from '../details/addInfo2'
                             that.btnDis = true;
                             Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
                         //跳到目标页
+                        // this.reload();
                         that.$router.push("/Home");
                         } else if (res.data.code === -1) {
                             Vue.prototype.$Message.error('提交失败!'+res.data.msg);
                         }
                         })
                         .catch(function(error) {
-                        Vue.prototype.$Message.error('提交失败！'+error);
+                        that.$Message.error('提交失败！'+error);
                         });
                     } else {
                         this.$Message.error('请填写完整信息!');
                     }
                 })
+            },
+            // 获取公司列表
+            getCompany(){
+                var that = this
+                this.$axios.get(this.imgsrc+'/rock/company/getComapnyList.action',{},{
+                    xhrFields: {
+                        withCredentials: true
+                    }          
+                })
+                .then(function(res) {
+                console.log(res)
+                if (res.data.code === 0) {
+                    that.companyList =res.data.list
+                } else if (res.data.code === -1) {
+                    that.$Message.error('提交失败!'+res.data.msg);
+                }
+                })
+                .catch(function(error) {
+                    that.$Message.error('提交失败！'+error);
+                });
             },
             handleReset (name) {
                 this.$refs[name].resetFields();

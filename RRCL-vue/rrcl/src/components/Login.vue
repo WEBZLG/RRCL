@@ -44,6 +44,7 @@ h2{
   position: absolute;
   top: 20%;
   left: 35%;
+  border-radius: 5px;
   padding: 20px;
   background-color:rgba(255, 255, 255, 0.3);
 }
@@ -73,11 +74,11 @@ h2{
 .fade-leave-to {
   opacity: 0;
 }
-.ivu-checkbox-wrapper {
+.registerBox .ivu-checkbox-wrapper {
   margin-bottom: 10px;
   color: #fff;
 }
-.ivu-input-type .ivu-input-icon-normal + .ivu-input,.ivu-input{
+.loginBox .ivu-input-type .ivu-input-icon-normal + .ivu-input,.loginBox .ivu-input{
   background-color: inherit;
   color: #fff;
 }

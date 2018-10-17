@@ -15,14 +15,14 @@
                         :on-success="uploadSuccessId"
                         :on-error="uploadError"
                         name="file"
-                        action="http://172.16.201.189:8083/rock/file/upload.action"
+                        :action="action"
                         >
                         <Button icon="ios-cloud-upload-outline">上传身份证照片</Button>
                     </Upload>
                 </div>
             </FormItem>
             <FormItem prop="birthdate" label="出生日期">
-                <DatePicker type="date" placeholder="选择日期" v-model="formValidate.birthdate"></DatePicker>
+                <DatePicker type="date" placeholder="选择日期" :value="formValidate.birthdate" @on-change="birthdateValue"></DatePicker>
             </FormItem>
             <FormItem label="性别" prop="sex">
                 <RadioGroup v-model="formValidate.sex">
@@ -42,24 +42,14 @@
             <FormItem label="联系地址" prop="address">
                 <Input v-model="formValidate.address"></Input>
             </FormItem>
-            <!-- <FormItem label="QQ">
-                <Input v-model="formValidate.qq"></Input>
-            </FormItem>
-            <FormItem label="微信">
-                <Input v-model="formValidate.weixin"></Input>
-            </FormItem> -->
             <FormItem label="选择企业/公司" prop="selectValue">
-                <Select v-model="formValidate.selectValue" placeholder="Select your city">
-                    <Option value="beijing">New York</Option>
-                    <Option value="shanghai">London</Option>
-                    <Option value="shenzhen">Sydney</Option>
+                <Select v-model="formValidate.selectValue" placeholder="请选择您所属的公司">
+                    <Option  v-for="item in companyList" :key="item.id" :value="item.name">{{item.name}}</Option>
                 </Select>
             </FormItem>
             <FormItem label="用户级别" prop="level">
                 <RadioGroup v-model="formValidate.level">
-                    <Radio label="2">企业管理</Radio>
-                    <Radio label="3">企业员工</Radio>
-                    <Radio label="4">普通用户</Radio>
+                    <Radio label="5">企业员工</Radio>
                 </RadioGroup>
             </FormItem>
         </Form>
@@ -70,14 +60,17 @@
     </div>
 </template>
 <script>
-import Vue from 'vue'
     export default {
+        inject:["reload"],
         data () {
             return {
+                imgsrc:domain.testUrl,
                 credentials: true,
                 btnDis:false,
                 idcardimg:'',
                 userId:'',
+                companyList:'',
+                action:domain.testUrl+'/rock/file/upload.action',
                 formValidate: {
                     selectValue:'',
                     realname: '',
@@ -90,7 +83,7 @@ import Vue from 'vue'
                     address:'',
                     // qq:'',
                     // weixin:'',
-                    level:'',
+                    level:'3',
                 },
                 ruleValidate: {
                     realname: [
@@ -100,7 +93,7 @@ import Vue from 'vue'
                         { required: true, message: '身份证号不能为空', trigger: 'blur' }
                     ],
                     birthdate: [
-                        { required: true,  type: 'date', message: '出生日期不能为空', trigger: 'change' }
+                        { required: true,  type: 'string', message: '出生日期不能为空', trigger: 'change' }
                     ],
                     age: [
                         { required: true, message: '年龄不能为空', trigger: 'blur' }
@@ -114,9 +107,9 @@ import Vue from 'vue'
                     email: [
                         { required: true, message: '邮箱不能为空', trigger: 'blur' }
                     ],
-                    selectValue: [
-                        { required: true, message: '企业/公司不能为空', trigger: 'change' }
-                    ],
+                    // selectValue: [
+                    //     { required: true, message: '企业/公司不能为空', trigger: 'change'}
+                    // ],
                     address: [
                         { required: true, message: '地址不能为空', trigger: 'blur' }
                     ],
@@ -128,10 +121,15 @@ import Vue from 'vue'
         },
         created(){
             this.userId = this.$store.state.token;
+            this.getCompany()
         },
         methods: {
+            birthdateValue(e){
+                this.formValidate.birthdate = e
+            },
             handleSubmit (name) {
                 var that = this;
+                console.log(this.formValidate.selectValue)
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                     console.log(valid)
@@ -141,13 +139,14 @@ import Vue from 'vue'
                     param.append('realName',this.formValidate.realname)
                     param.append('idcard',this.formValidate.idcard)
                     param.append('idcardPhoto',this.idcardimg)
+                    // param.append('idcardPhoto','http://172.16.201.189:8080/propath/1539237841.jpg')
                     param.append('addr',this.formValidate.address)
                     param.append('phone',this.formValidate.call)
                     param.append('birthdayStr',this.formValidate.birthdate)
                     param.append('sex',this.formValidate.sex)
                     param.append('level',this.formValidate.level)
                     param.append('companyInfo.name',this.formValidate.selectValue)
-                    this.$axios.post('http://172.16.201.189:8083/rock/auth/submitInfo.action',param,{
+                    this.$axios.post(this.imgsrc+'/rock/auth/submitInfo.action',param,{
                             xhrFields: {
                                 withCredentials: true
                             }          
@@ -156,16 +155,17 @@ import Vue from 'vue'
                         console.log(res)
                         if (res.data.code === 0) {
                             that.btnDis = true;
-                            Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
+                            that.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
                         //跳到目标页
+                        that.reload();
                         that.$router.push("/Home");
                         return false;
                         } else if (res.data.code === -1) {
-                            Vue.prototype.$Message.error('提交失败!'+res.data.msg);
+                           that.$Message.error('提交失败!'+res.data.msg);
                         }
                         })
                         .catch(function(error) {
-                        Vue.prototype.$Message.error('提交失败！'+error);
+                           that.$Message.error('提交失败！'+error);
                         });
                     } else {
                         this.$Message.error('请填写完整信息!');
@@ -182,6 +182,26 @@ import Vue from 'vue'
             uploadError(res, file){
                 console.log(res,file)
                 this.$Message.error('上传失败！'+res.data.msg);
+            },
+            // 获取公司列表
+            getCompany(){
+                var that = this
+                this.$axios.get(this.imgsrc+'/rock/company/getComapnyList.action',{},{
+                    xhrFields: {
+                        withCredentials: true
+                    }          
+                })
+                .then(function(res) {
+                console.log(res)
+                if (res.data.code === 0) {
+                    that.companyList =res.data.list
+                } else if (res.data.code === -1) {
+                    that.$Message.error('提交失败!'+res.data.msg);
+                }
+                })
+                .catch(function(error) {
+                    that.$Message.error('提交失败！'+error);
+                });
             }
         } 
     }

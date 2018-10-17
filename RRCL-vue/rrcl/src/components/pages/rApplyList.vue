@@ -17,10 +17,11 @@
     </div>
 </template>
 <script>
-import Vue from 'vue'
 export default {
+  inject:["reload"],
   data() {
     return {
+      imgsrc:domain.testUrl,
       loading: true,
       modal: false,
       modal1: false,
@@ -53,7 +54,7 @@ export default {
         },
         {
           title: "审核状态",
-          key: "level",
+          key: "status",
           width:100
         },
         {
@@ -135,7 +136,7 @@ export default {
     },
     getDate() {
       var that = this
-      this.$axios.get("http://172.16.201.189:8083/rock/auth/authList.action",{},{
+      this.$axios.get(this.imgsrc+"/rock/auth/authList.action",{},{
             xhrFields: {
                 withCredentials: true
             }          
@@ -143,6 +144,33 @@ export default {
         .then(res => {
         console.log(res);
         if (res.data.code === 0) {
+          for(var i in res.data.users){
+              if(res.data.users[i].sex===1){
+                  res.data.users[i].sex="男"
+              }else{
+                  res.data.users[i].sex="女"
+              };
+              switch(res.data.users[i].level){
+                case 2:
+                res.data.users[i].level="企业管理员"
+                break;
+                case 5:
+                res.data.users[i].level="企业员工"
+                break;
+                case 6:
+                res.data.users[i].level="普通用户"
+                break;
+              };
+              switch(res.data.users[i].status){
+                case 0:
+                res.data.users[i].status="认证审核"
+                break;
+                case 1:
+                res.data.users[i].status="修改审核"
+                break;
+              };
+              
+          }
           that.data = res.data.users;
           that.loading = false;
         } else if (res.data.code === -1) {
@@ -150,47 +178,54 @@ export default {
         }
       })
       .catch(function(error) {
-        Vue.prototype.$Message.error('数据加载失败！');
+        that.$Message.error('数据加载失败！');
       });
     },
+    // 认证通过
     approve() {
       console.log("通过");
+      var that = this
       var param = new URLSearchParams();
       param.append("userId", this.postuserId);
       param.append("status", 2);
-      this.$axios.post("http://172.16.201.189:8083/rock/auth/auditing.action", param,{
+      this.$axios.post(this.imgsrc+"/rock/auth/auditing.action", param,{
             xhrFields: {
                 withCredentials: true
             }          
         }).then(function(res) {
         if (res.data.code === 0) {
-          Vue.prototype.$Message.info("提交成功");
+          that.$Message.info("提交成功");
+          that.reload();
         } else if (res.data.code === -1) {
-          Vue.prototype.$Message.error("提交失败!" + res.data.msg);
+          that.$Message.error("提交失败!" + res.data.msg);
         }
       })
       .catch(function(error) {
-        Vue.prototype.$Message.error('提交失败！');
+        that.$Message.error('提交失败！'+error);
       });
     },
+    // 认证驳回
     reject() {
+      var that = this
       console.log("驳回");
       var param = new URLSearchParams();
       param.append("userId", this.postuserId);
       param.append("status", 3);
-      this.$axios.post("http://172.16.201.189:8083/rock/auth/auditing.action", param,{
+      this.$axios.post(this.imgsrc+"/rock/auth/auditing.action", param,{
             xhrFields: {
                 withCredentials: true
             }          
         }).then(function(res) {
+          console.log(res)
         if (res.data.code === 0) {
-          Vue.prototype.$Message.info("提交成功");
+          that.$Message.info("提交成功");
+          that.reload();
         } else if (res.data.code === -1) {
-          Vue.prototype.$Message.error("提交失败!" + res.data.msg);
+          that.$Message.error("提交失败!" + res.data.msg);
         }
       })
       .catch(function(error) {
-        Vue.prototype.$Message.error('提交失败！');
+        that.$Message.error('提交失败！');
       });
     }
   }

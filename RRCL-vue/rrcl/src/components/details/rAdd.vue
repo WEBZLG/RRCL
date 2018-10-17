@@ -5,24 +5,24 @@
                 <Icon type="university"></Icon>&nbsp;账户授权
             </h4>
         </div>
-        <div class="wrapper">
+        <!-- <div class="wrapper">
             <Row>
                 <Col :span="6">
                     <label for="">管理员账户</label>
                 </Col>
                 <Col :span="18">
-                    <Input v-model="value1" @on-change="value1Change" disabled></Input>
+                    <Input v-model="adminValue" @on-change="adminValueChange" disabled></Input>
                 </Col>
             </Row>
-        </div>
+        </div> -->
         <div class="wrapper">
             <Row>
                 <Col :span="6">
                     <label for="">被授予账户</label>
                 </Col>
                 <Col :span="18">
-                    <Select v-model="model1">
-                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    <Select v-model="otherValue" @on-change = "otherValueChange">
+                        <Option v-for="item in userList" :value="item.userName" :key="item.userId">{{ item.userName }}</Option>
                     </Select>
                 </Col>
             </Row>
@@ -30,13 +30,31 @@
         <div class="wrapper">
             <Row>
                 <Col :span="6">
-                    <label for="">被授予账户</label>
+                    <label for="">设备限制</label>
                 </Col>
                 <Col :span="18">
-                    <CheckboxGroup v-model="limits">
-                        <Checkbox label="可播放"></Checkbox>
-                        <Checkbox label="可下载"></Checkbox>
-                        <Checkbox label="可授权"></Checkbox>
+                    <Input v-model="equipmentValue" @on-change="equipmentValueChange"></Input>
+                </Col>
+            </Row>
+        </div>
+        <div class="wrapper">
+            <Row>
+                <Col :span="6">
+                    <label for="">添加水印</label>
+                </Col>
+                <Col :span="18">
+                    <Input v-model="watermarkValue" @on-change="watermarkValueChange"></Input>
+                </Col>
+            </Row>
+        </div>
+        <div class="wrapper">
+            <Row>
+                <Col :span="6">
+                    <label for="">授予权限</label>
+                </Col>
+                <Col :span="18">
+                    <CheckboxGroup v-model="limitsValue" :key="item.value" v-for="item in limitsList" @on-change="limitsValueChange">
+                        <Checkbox :label='item.value'>{{item.name}}</Checkbox>
                     </CheckboxGroup>
                 </Col>
             </Row>
@@ -47,7 +65,7 @@
                     <label for="">授予播放时间</label>
                 </Col>
                 <Col :span="18">
-                    <Input v-model="value2" @on-change="value2Change"></Input>
+                    <Input v-model="playTimeValue" @on-change="playTimeValueChange"></Input>
                 </Col>
             </Row>
         </div>
@@ -57,73 +75,160 @@
                     <label for="">授予播放次数</label>
                 </Col>
                 <Col :span="18">
-                    <Input v-model="value3" @on-change="value3Change"></Input>
+                    <Input v-model="playNumValue" @on-change="playNumValueChange"></Input>
                 </Col>
             </Row>
         </div>
         <div class="wrapper">
             <Row>
                 <Col :span="6">
-                    <label for="">授予播放日期</label>
+                    <label for="">授予时间段</label>
+                </Col>
+                <Col :span="8">
+                    <Input v-model="starValue" @on-change="starValueChange" placeholder="开始时间单位S"></Input>
+                </Col>
+                <Col :span="2">
+                    <label for="">&nbsp</label>
+                </Col>
+                <Col :span="8">
+                    <Input v-model="stopValue" @on-change="stopValueChange" placeholder="结束时间单位S"></Input>
+                </Col>
+            </Row>
+        </div>
+        <div class="wrapper">
+            <Row>
+                <Col :span="6">
+                    <label for="">授予过期日期</label>
                 </Col>
                 <Col :span="18">
-                    <DatePicker type="date" placeholder="选择日期"></DatePicker>
+                    <DatePicker type="datetime"  @on-change="overValueChange" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" style="width: 100%"></DatePicker>
+                </Col>
+            </Row>
+        </div>
+        <div class="wrapper">
+            <Row>
+                <Col :span="6">
+                    <label for="">授予类型</label>
+                </Col>
+                <Col :span="18">
+                    <RadioGroup v-model="typeValue" @on-change="typeValueChange">
+                        <Radio label="0">独立授权</Radio>
+                        <Radio label="1">委托授权</Radio>
+                    </RadioGroup>
                 </Col>
             </Row>
         </div>
     </Row>
 </template>
 <script>
+import Vue from 'vue'
     export default {  
         name: 'add',
         data() {
             return {
-                value1:'',
-                value2:'',
-                value3:'',
-                limits:[],
-                cityList: [
+                imgsrc:domain.testUrl,
+                // adminValue:'',
+                otherValue:'',
+                equipmentValue:'',
+                watermarkValue:'',
+                limitsValue:[],
+                playTimeValue:'',
+                playNumValue:'',
+                starValue:'',
+                stopValue:'',
+                overValue:'',
+                typeValue:'0',
+                userList: [],
+                limitsList:[
                     {
-                        value: 'beijing',
-                        label: '北京市'
+                        name:'可播放',
+                        value:'play'
                     },
                     {
-                        value: 'shanghai',
-                        label: '上海市'
+                        name:'可下载源文件',
+                        value:'downy'
                     },
                     {
-                        value: 'shenzhen',
-                        label: '深圳市'
+                        name:'可下加密文件',
+                        value:'dowmj'
                     },
                     {
-                        value: 'hangzhou',
-                        label: '杭州市'
-                    },
-                    {
-                        value: 'nanjing',
-                        label: '南京市'
-                    },
-                    {
-                        value: 'chongqing',
-                        label: '重庆市'
+                        name:'可授权',
+                        value:'sq'
                     }
-                ],
-                model1: ''
+                ]
             }
         },
+        mounted(){
+            this.getUsers()
+        },
         methods:{
-            value1Change:function() {
+            // adminValueChange:function() {
+            //     var obj = this
+            //     this.$emit('adminValueR', obj.adminValue)
+            // },
+            otherValueChange:function() {
                 var obj = this
-                this.$emit('value1', obj.value1)
+                this.$emit('otherValueR', obj.otherValue)
             },
-            value2Change:function() {
+            equipmentValueChange:function() {
                 var obj = this
-                this.$emit('value2', obj.value2)
+                this.$emit('equipmentValueR', obj.equipmentValue)
             },
-            value3Change:function() {
+           watermarkValueChange:function() {
                 var obj = this
-                this.$emit('value3', obj.value3)
+                this.$emit('watermarkValueR', obj.watermarkValue)
+            },
+            limitsValueChange:function() {
+                var obj = this
+                this.$emit('limitsValueR', obj.limitsValue)
+            },
+            playTimeValueChange:function() {
+                var obj = this
+                this.$emit('playTimeValueR', obj.playTimeValue)
+            },
+            playNumValueChange:function() {
+                var obj = this
+                this.$emit('playNumValueR', obj.playNumValue)
+            },
+            starValueChange:function() {
+                var obj = this
+                this.$emit('starValueR', obj.starValue)
+            },
+           stopValueChange:function() {
+                var obj = this
+                this.$emit('stopValueR', obj.stopValue)
+            },
+            overValueChange:function(e) {
+                var obj = this
+                obj.overValue = e
+                this.$emit('overValueR', obj.overValue)
+            },
+            typeValueChange:function() {
+                var obj = this
+                this.$emit('typeValueR', obj.typeValue)
+            },
+            getUsers(){
+                var that = this
+                this.$axios.post(this.imgsrc+'/rock/user/getUserList.action',{},{
+                        xhrFields: {
+                            withCredentials: true
+                        }          
+                    })
+                    .then(function(res) {
+                        console.log(res)
+                    if (res.data.code === 0) {
+                       that.userList =res.data.list
+                    // this.reload();
+                    } else if (res.data.code === -1) {
+                        Vue.prototype.$Message.error('获取数据失败!'+res.data.msg);
+                    }
+                    })
+                    .catch(function(error) {
+                    Vue.prototype.$Message.error('获取数据失败！'+error);
+                    });
             }
+
         } 
     }
 </script>
@@ -138,5 +243,7 @@
 .wrapper{
     margin-top: 15px;
 }
-
+.ivu-input{
+    color: #2d8cf0;
+}
 </style>

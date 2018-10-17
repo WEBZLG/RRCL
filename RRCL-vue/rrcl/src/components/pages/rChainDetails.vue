@@ -17,7 +17,6 @@ Vue.use(VueSocketio, socketio('http://172.16.201.189:8000/mio'));
                 pageTotal:0,
                 pageNum:1,
                 pageSize: 10,
-                messgae:[],
                 columns: [
                     {
                         title: '区块号',
@@ -79,12 +78,11 @@ Vue.use(VueSocketio, socketio('http://172.16.201.189:8000/mio'));
                 this.pageTotal = val.msg.blockNumber
             },
             get_blocks(val){
-                this.messgae = val.msg
-                for(var i in this.messgae){
-                    var newTime = new Date(this.messgae[i].timestamp*1000).toLocaleString()
-                    this.messgae[i].timestamp = newTime
+                this.data=val.msg.reverse()
+                for(var i in this.data){
+                    var newTime = new Date(this.data[i].timestamp*1000).toLocaleString()
+                   this.data[i].timestamp = newTime
                 }
-                this.data = this.messgae.reverse();
                 this.loading = false;
             }
         },

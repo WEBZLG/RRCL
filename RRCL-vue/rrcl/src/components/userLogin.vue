@@ -1,4 +1,5 @@
 <template>
+  <div id="loginBox">
       <Form ref="loginformValidate" :model="loginformValidate" :rules="loginRules">
         <transition name="fade">
           <div class="loginBox">
@@ -85,6 +86,7 @@ export default {
     };
 
     return {
+      imgsrc:domain.testUrl,
       buttonLoading:false,
       butText:"登录",
       loginformValidate: {
@@ -130,7 +132,7 @@ export default {
           var param = new URLSearchParams()
           param.append('username',this.loginformValidate.username)
           param.append('password',this.loginformValidate.password)
-          this.$axios.post('http://172.16.201.189:8083/rock/sso/login.action',param,{
+          this.$axios.post(this.imgsrc+'/rock/sso/login.action',param,{
             xhrFields: {
                   withCredentials: true
             }
@@ -143,12 +145,6 @@ export default {
                 this.$store.commit('GET_USER', res.data.userInfo.userName)
                 this.buttonLoading = false;
                 this.butText = "登录"
-              //拿到返回的token和username，并存到store
-              // let token = data.token;
-              // let username = data.username;
-              // this.$store.dispatch("UserLogin", token);
-              // this.$store.dispatch("UserName", username);
-              //跳到目标页
               this.$router.push("/Home");
               } else if (res.data.code === -1) {
                 Vue.prototype.$Message.error('登录失败!'+res.data.msg);
@@ -157,31 +153,11 @@ export default {
               }
             })
             .catch(function(error) {
+              this.buttonLoading = false;
+              this.butText = "登录"
               Vue.prototype.$Message.error('提交失败！');
-              // this.buttonLoading = false;
-              // this.butText = "登录"
               });
             }
-          // axios.userLogin(param).then(({ res }) => {
-          //   console.log(res)
-          //   //账号存在
-          //   if (res.data.code === 0) {
-          //     this.$Spin.hide();
-          //     Vue.prototype.$Message.info('登录成功！');;
-          //     //拿到返回的token和username，并存到store
-          //     let token = data.token;
-          //     let username = data.username;
-          //     this.$store.dispatch("UserLogin", token);
-          //     this.$store.dispatch("UserName", username);
-          //     //跳到目标页
-          //     this.$router.push("/Home");
-          //   }else if(res.data.code === -1){
-          //     //账号不存在
-          //     this.$Spin.hide();
-          //     Vue.prototype.$Message.error('注册失败!'+res.data.msg);;
-          //     return;
-          //   }
-          // });
         else{
           // this.$Spin.hide();
           Vue.prototype.$Message.error('请填写账户信息！');
@@ -247,11 +223,11 @@ h2 {
   margin-bottom: 10px;
   color: #fff;
 }
-.ivu-input-type .ivu-input-icon-normal + .ivu-input,
+/* .ivu-input-type .ivu-input-icon-normal + .ivu-input,
 .ivu-input {
   background-color: inherit;
   color: #fff;
-}
+} */
 .registerA {
   text-align: center;
 }

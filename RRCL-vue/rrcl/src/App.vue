@@ -1,12 +1,30 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view v-if="isRouterAlive" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  provide(){
+    return{
+      reload:this.reload
+    }
+  },
+  data(){
+    return{
+      isRouterAlive:true
+    }
+  },
+  methods:{
+    reload(){
+      this.isRouterAlive= false
+      this.$nextTick(function(){
+        this.isRouterAlive = true
+      })
+    }
+  }
 }
 </script>
 
@@ -16,10 +34,7 @@ html,body,#app{
   width: 100%;
   background-color: #fffed0;
 }
-.ivu-table,
-.ivu-table td{
-  background-color: inherit ;
-}
+
 .ivu-table th {
     height: 40px;
     white-space: nowrap;
@@ -36,25 +51,25 @@ html,body,#app{
     box-sizing: border-box;
     word-break: inherit;
 }
-.ivu-menu-light {
-    background: inherit;
-}
+
 .ivu-menu-horizontal {
     height: 35px;
     line-height: 22px;
 }
-.ivu-select-selection{
-  background: inherit;
-}
-/* .information .ivu-tabs-nav{
-    margin-left: 40px;
-} */
+
+.fileUploading .ivu-input,
 .information .ivu-input,
 .information .ivu-btn-default{
     background-color: inherit;
     color: #2d8cf0;
 }
-.ivu-radio-inner{
+
+.ivu-table,
+.ivu-table td,
+.ivu-radio-inner,
+.ivu-upload-drag,
+.ivu-select-selection,
+.ivu-menu-light{
   background-color: inherit;
 }
 </style>

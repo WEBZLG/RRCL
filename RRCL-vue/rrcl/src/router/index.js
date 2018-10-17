@@ -7,7 +7,8 @@ Vue.use(iView);
 Vue.use(Router)
 
 const router = new Router({
-    mode: 'history',
+    // mode: 'history',
+    base: '/dist/',
     routes: [{ path: '/', redirect: '/Login' },
         {
             path: '/Login',
@@ -111,6 +112,12 @@ const router = new Router({
                     name: 'Information',
                     meta: { requireAuth: true }, // 判断是否需要登录
                     component: resolve => require(['../components/pages/rInformation.vue'], resolve)
+                },
+                {
+                    path: '/ChangeInformation',
+                    name: 'ChangeInformation',
+                    meta: { requireAuth: true }, // 判断是否需要登录
+                    component: resolve => require(['../components/pages/rChangeInformation.vue'], resolve)
                 },
                 {
                     path: '/PersonInfor',

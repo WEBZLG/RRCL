@@ -15,14 +15,14 @@
                         :on-success="uploadSuccessId"
                         :on-error="uploadError"
                         name="file"
-                        action="http://172.16.201.189:8083/rock/file/upload.action"
+                        :action="action"
                         >
                         <Button icon="ios-cloud-upload-outline">上传身份证照片</Button>
                     </Upload>
                 </div>
             </FormItem>
             <FormItem prop="birthdate" label="出生日期">
-                <DatePicker type="date" placeholder="选择日期" v-model="formValidate.birthdate"></DatePicker>
+                <DatePicker type="date" placeholder="选择日期" :value="formValidate.birthdate" @on-change="birthdateValue"></DatePicker>
             </FormItem>
             <FormItem label="性别" prop="sex">
                 <RadioGroup v-model="formValidate.sex">
@@ -58,12 +58,15 @@
 <script>
 import Vue from 'vue'
     export default {
+        inject:["reload"],
         data () {
             return {
+                imgsrc:domain.testUrl,
                 credentials: true,
                 btnDis:false,
                 idcardimg:'',
                 userId:'',
+                action:domain.testUrl+'/rock/file/upload.action',
                 formValidate: {
                     realname: '',
                     sex: '',
@@ -75,6 +78,7 @@ import Vue from 'vue'
                     address:'',
                     // qq:'',
                     // weixin:'',
+                    level:'6'
                 },
                 ruleValidate: {
                     realname: [
@@ -84,7 +88,7 @@ import Vue from 'vue'
                         { required: true, message: '身份证号不能为空', trigger: 'blur' }
                     ],
                     birthdate: [
-                        { required: true,  type: 'date', message: '出生日期不能为空', trigger: 'change' }
+                        { required: true,  type: 'string', message: '出生日期不能为空', trigger: 'change' }
                     ],
                     age: [
                         { required: true, message: '年龄不能为空', trigger: 'blur' }
@@ -108,6 +112,9 @@ import Vue from 'vue'
             this.userId = this.$store.state.token;
         },
         methods: {
+            birthdateValue(e){
+                this.formValidate.birthdate = e
+            },
             handleSubmit (name) {
                 var that = this;
                 this.$refs[name].validate((valid) => {
@@ -120,10 +127,11 @@ import Vue from 'vue'
                     param.append('idcard',this.formValidate.idcard)
                     param.append('idcardPhoto',this.idcardimg)
                     param.append('phone',this.formValidate.call)
+                    param.append('level',this.formValidate.level)
                     param.append('addr',this.formValidate.address)
                     param.append('birthdayStr',this.formValidate.birthdate)
                     param.append('sex',this.formValidate.sex)
-                    this.$axios.post('http://172.16.201.189:8083/rock/auth/submitInfo.action',param,{
+                    this.$axios.post(this.imgsrc+'/rock/auth/submitInfo.action',param,{
                             xhrFields: {
                                 withCredentials: true
                             }          
@@ -134,6 +142,7 @@ import Vue from 'vue'
                             that.btnDis = true;
                             Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
                         //跳到目标页
+                        // this.reload();
                         that.$router.push("/Home");
                         return false;
                         } else if (res.data.code === -1) {
@@ -141,7 +150,7 @@ import Vue from 'vue'
                         }
                         })
                         .catch(function(error) {
-                        Vue.prototype.$Message.error('提交失败！'+error);
+                            that.$Message.error('提交失败！'+error);
                         });
                     } else {
                         this.$Message.error('请填写完整信息!');

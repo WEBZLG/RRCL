@@ -2,42 +2,45 @@
     <div class="main">
         <div class="monitorDate">
             <Row class="row">
-                <Col :span="4" class="item">
+                <Col :span="8" class="item">
                     <Icon type="md-cube"></Icon>
                     <div>
                         <h4>区块数量</h4>
                         <p id="dataNums1" class="digits"></p>
                     </div>
                 </Col>
-                <Col :span="4" class="item">
+                <Col :span="8" class="item">
                     <Icon type="ios-cube" />
                     <div>
                         <h4>叔块数量</h4>
                         <p id="dataNums2" class="digits"></p>
                     </div>
                 </Col>
-                <Col :span="4" class="item">
+                <Col :span="8" class="item">
                     <Icon type="logo-usd" />
                     <div>
                         <h4>交易数量</h4>
                         <p id="dataNums3" class="digits"></p>
                     </div>
                 </Col>
-                <Col :span="4" class="item">
+              </Row>
+
+              <Row>
+                <Col :span="8" class="item">
                     <Icon type="ios-locate"/>
                     <div>
                         <h4>地址数量</h4>
                         <p id="dataNums4" class="digits"></p>
                     </div>
                 </Col>
-                <Col :span="4" class="item">
+                <Col :span="8" class="item">
                     <Icon type="logo-buffer"/>
                     <div>
                         <h4>挂起交易数量</h4>
                         <p id="dataNums5" class="digits"></p>
                     </div>
                 </Col>
-                <Col :span="4" class="item">
+                <Col :span="8" class="item">
                     <Icon type="ios-time" />
                     <div>
                         <h4>列队交易数量</h4>
@@ -139,6 +142,7 @@ export default {
       nodeObject: {},
       nodeLinks: [],
       linkPeer:'',
+      pathNode:'',
       cityList: [
         {
           value: "30000",
@@ -268,6 +272,7 @@ export default {
   created() {
     this.getTrade();
     this.setTimer();
+    this.pathNode = "../../assets/computer.png"
   },
   updated() {},
   distroyed: function() {
@@ -387,7 +392,7 @@ export default {
             layout: "circular",
             symbolSize: 50,
             roam: false,
-            // symbol:"image:///../../assets/computer.png",
+            // symbol:"image://"+this.pathNode,
             label: {
               normal: {
                 show: true,
@@ -455,14 +460,8 @@ export default {
           if (this.linkPeer == "") {
             this.$Message.error("请输入IP+端口!");
           } else {
-            console.log(this.linkPeer)
             this.addPeer(this.linkPeer)
-            // const msg = this.$Message.loading({
-            //   content: "正在保存..",
-            //   duration: 0
-            // }); 
           }
-          // this.saveLink(msg)
         }
       });
     }
@@ -488,8 +487,6 @@ export default {
 .item {
   border: 1px solid #2d8cf0;
   color: #2d8cf0;
-  border-bottom: none;
-  border-right: none;
 }
 .item p {
   font-size: 16px;

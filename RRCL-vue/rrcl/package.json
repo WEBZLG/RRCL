@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "echarts": "^4.1.0",
+    "gojs": "^1.8.31",
     "iview": "^3.0.0",
     "jquery": "^3.3.1",
     "socket.io": "^2.1.1",
@@ -20,6 +21,7 @@
     "vue-cute-timeline": "^1.2.5",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1-b",
+    "vue-video-player": "^5.0.2",
     "vue2-animate": "^2.0.0",
     "vuex": "^3.0.1"
   },

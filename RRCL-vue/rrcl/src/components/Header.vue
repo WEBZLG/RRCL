@@ -30,19 +30,20 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import Vue from "vue";
 // import axios from "../axios.js";
 export default {
   data() {
     return {
+      imgsrc:domain.testUrl,
       users: "",
-      admin:"",
+      admin: ""
     };
   },
   created() {
     this.admin = this.$store.state.user;
     // axios.getUser().then(response => {
-	// 	console.log(123)
+    // 	console.log(123)
     //   if (response.status === 401) {
     //     //不成功跳转回登录页
     //     this.$router.push("/Login");
@@ -56,14 +57,28 @@ export default {
   },
   methods: {
     logout() {
-    //清除token
       var that = this;
-      that.$store.dispatch("UserLogout");
-      if (!that.$store.state.token) {
-        that.$router.push("/Login");
-      } else {
-        console.log("失败")
-      }
+      this.$axios.get( this.imgsrc+"/rock/logout.action",{},{
+            xhrFields: {
+              withCredentials: true
+            }
+          }
+        ).then(res => {
+          console.log(res);
+          if (res.data.code === 0) {
+            that.$Message.info("退出成功！");
+            //清除token
+            that.$store.dispatch("UserLogout");
+            that.$router.push("/Login");
+          } else if (res.data.code === -1) {
+            // that.$Message.error("退出失败!" + res.data.msg);
+            //清除token
+            that.$store.dispatch("UserLogout");
+            that.$router.push("/Login");
+          }
+        }).catch(function(error) {
+          that.$Message.error("退出失败！" + error);
+        });
     }
   }
 };
@@ -91,10 +106,10 @@ h3 {
   vertical-align: middle;
   font-size: 20px;
 }
-.headLogo{
+.headLogo {
   text-align: right;
 }
-.ivu-dropdown-item{
+.ivu-dropdown-item {
   text-align: center;
 }
 </style>
