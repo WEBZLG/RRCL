@@ -7,6 +7,7 @@ import store from './store/index'
 import VueParticles from 'vue-particles' //登录注册背景
 import $ from 'jquery'
 import Axios from 'axios'
+import go from 'gojs'
 import 'vue2-animate/dist/vue2-animate.min.css'
 import VideoPlayer from 'vue-video-player'
 require('video.js/dist/video-js.css')

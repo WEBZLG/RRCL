@@ -44,7 +44,7 @@
             </FormItem>
             <FormItem label="选择企业/公司" prop="selectValue">
                 <Select v-model="formValidate.selectValue" placeholder="请选择您所属的公司">
-                    <Option  v-for="item in companyList" :key="item.id" :value="item.name">{{item.name}}</Option>
+                    <Option  v-for="item in companyList" :key="item.id" :value="item.id">{{item.name}}</Option>
                 </Select>
             </FormItem>
             <FormItem label="用户级别" prop="level">
@@ -145,7 +145,8 @@
                     param.append('birthdayStr',this.formValidate.birthdate)
                     param.append('sex',this.formValidate.sex)
                     param.append('level',this.formValidate.level)
-                    param.append('companyInfo.name',this.formValidate.selectValue)
+                    // param.append('companyInfo.name',this.formValidate.selectValue)
+                    param.append('companyId',this.formValidate.selectValue)
                     this.$axios.post(this.imgsrc+'/rock/auth/submitInfo.action',param,{
                             xhrFields: {
                                 withCredentials: true

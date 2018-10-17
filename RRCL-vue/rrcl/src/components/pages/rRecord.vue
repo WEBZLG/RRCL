@@ -192,7 +192,7 @@ export default {
       if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
       var $ = go.GraphObject.make;  // for conciseness in defining templates in this function
 
-      myDiagram =
+      var myDiagram =
         $(go.Diagram, "myDiagramDiv",  // must be the ID or reference to div
           { initialContentAlignment: go.Spot.Center });
 

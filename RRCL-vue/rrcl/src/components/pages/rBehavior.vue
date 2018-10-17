@@ -8,11 +8,11 @@
                 <timeline timeline-theme="lightblue">
                     <timeline-title>{{this.$store.state.user}}</timeline-title>
                     <timeline-item bg-color="#e6b6b0" :hollow="true" v-for="item in this.actionList" :key="item.mid">
-                        <h4>行为：{{item.details.action}}</h4>
+                        <h4>行为：{{item.operate}}</h4>
                         <p>时间：{{new Date(parseInt(item.timestamp) * 1000).toLocaleString()}}</p>
                         <p>操作的节点：{{item.details.node}}</p>
                     </timeline-item>
-                    <timeline-item bg-color="#e6b6b0" :hollow="true">
+                    <timeline-item bg-color="#e6b6b0" :hollow="true" v-show="isShow">
                         <h4>当日无操作</h4>
                     </timeline-item>
                 </timeline>
@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       value: "",
+      isShow:false,
       imgsrc:domain.testUrl,
       user:'',
       actionList:[]
@@ -78,8 +79,32 @@ export default {
         .then(function(res) {
           console.log(res);
           if (res.data.code === 0) {
-            that.actionList = res.data.list
-
+            that.actionList = []
+            if(res.data.list.length===0){
+              that.isShow = true
+            }else{
+              that.isShow = false
+            }
+            for(var i in res.data.list){
+              switch(res.data.list[i].operate){
+                case "addUser" :
+                res.data.list[i].operate ="添加用户"
+                break;
+                case "uplItem" :
+                res.data.list[i].operate ="上传资源"
+                break;
+                case "addPerm" :
+                res.data.list[i].operate ="资源授权"
+                break;
+                case "play" :
+                res.data.list[i].operate ="播放视频"
+                break;
+                case "stop" :
+                res.data.list[i].operate ="停止视频用户"
+                break;
+              }
+              that.actionList = res.data.list
+            }
             console.log(that.actionList.length)
           } else if (res.data.code === -1) {
             that.$Message.error("获取数据失败!" + res.data.msg);
@@ -91,6 +116,7 @@ export default {
     }
   }
 };
+
 </script>
 
 <style>

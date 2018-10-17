@@ -55,9 +55,9 @@
                                 </Upload>
                             </div>
                         </FormItem>
-                        <FormItem label="选择已有公司" prop="company">
-                            <Select v-model="formValidate.company" placeholder="请选择您所属的公司">
-                                <Option  v-for="item in companyList" :key="item.id" :value="item.name">{{item.name}}</Option>
+                        <FormItem label="选择已有公司" prop="companyId">
+                            <Select v-model="formValidate.companyId" placeholder="请选择您所属的公司">
+                                <Option  v-for="item in companyList" :key="item.id" :value="item.id">{{item.name}}</Option>
                             </Select>
                         </FormItem>
                         <FormItem label="联系地址" prop="Address">
@@ -92,7 +92,6 @@
     </div>
 </template>
 <script>
-import Vue from 'vue'
 import addInfo from '../details/addInfo'
 import addInfo2 from '../details/addInfo2'
     export default {
@@ -121,7 +120,8 @@ import addInfo2 from '../details/addInfo2'
                     email:'',
                     // qq:'',
                     // weixin:'',
-                    level:'2'
+                    level:'2',
+                    companyId:''
                 },
                 ruleValidate: {
                     realname: [
@@ -181,22 +181,23 @@ import addInfo2 from '../details/addInfo2'
                      console.log(valid)
                     
                     var param = new URLSearchParams()
-                    param.append('userId',this.userId)
-                    param.append('email',this.formValidate.email)
-                    param.append('realName',this.formValidate.realname)
-                    param.append('idcard',this.formValidate.idcard)
-                    param.append('phone',this.formValidate.call)
+                    param.append('userId',that.userId)
+                    param.append('email',that.formValidate.email)
+                    param.append('realName',that.formValidate.realname)
+                    param.append('idcard',that.formValidate.idcard)
+                    param.append('phone',that.formValidate.call)
                     param.append('idcardPhoto',this.cardImg)
                     // param.append('idcardPhoto','http://172.16.201.189:8080/propath/1539237841.jpg')
                     
-                    param.append('addr',this.formValidate.Address)
-                    param.append('birthdayStr',this.formValidate.birthdate)
-                    param.append('sex',this.formValidate.sex)
-                    param.append('level',this.formValidate.level)
-                    param.append('companyInfo.name',this.formValidate.company)
-                    param.append('companyInfo.apt',this.companyImg)
+                    param.append('addr',that.formValidate.Address)
+                    param.append('birthdayStr',that.formValidate.birthdate)
+                    param.append('sex',that.formValidate.sex)
+                    param.append('level',that.formValidate.level)
+                    param.append('companyId',that.formValidate.companyId)
+                    param.append('companyInfo.name',that.formValidate.company)
+                    param.append('companyInfo.apt',that.companyImg)
                     // param.append('companyInfo.apt','http://172.16.201.189:8080/propath/1539237841.jpg')
-                    this.$axios.post(this.imgsrc+'/rock/auth/submitInfo.action',param,{
+                    that.$axios.post(that.imgsrc+'/rock/auth/submitInfo.action',param,{
                             xhrFields: {
                                 withCredentials: true
                             }          
@@ -205,12 +206,12 @@ import addInfo2 from '../details/addInfo2'
                         console.log(res)
                         if (res.data.code === 0) {
                             that.btnDis = true;
-                            Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
+                            that.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
                         //跳到目标页
                         // this.reload();
                         that.$router.push("/Home");
                         } else if (res.data.code === -1) {
-                            Vue.prototype.$Message.error('提交失败!'+res.data.msg);
+                            that.$Message.error('提交失败!'+res.data.msg);
                         }
                         })
                         .catch(function(error) {

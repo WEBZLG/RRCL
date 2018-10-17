@@ -127,27 +127,15 @@ export default {
     // 	return this.$route.path.replace('/','Uploading');
     // }
   },
-  created () {
-  this.getStatus(this.$route.path)
-  },
-  watch: {
-    '$route' (to, from) {
-      this.getStatus(this.$route.path)
-    }
-  },
+
   mounted() {
     this.username = this.$store.state
-    this.menuList();
     this.getPersonInformation();
   },
   methods: {
     routeTo(e) {
       // console.log(e);
       this.$router.push(e);
-    },
-    getStatus (urlStr) {
-      var urlStrArr = urlStr.split('/')
-      return urlStrArr[urlStrArr.length - 1]
     },
     menuList() {
       // 这个方法里定义好，高亮和路由
@@ -223,6 +211,7 @@ export default {
               this.menuData = this.menuDataList.splice(0, 5);
               break;
           }
+          this.menuList();
         })
         .catch(function(error) {
           that.$Message.error("获取消息失败！");
