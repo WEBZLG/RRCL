@@ -102,7 +102,6 @@ export default {
           }
         )
         .then(res => {
-          console.log(res);
           this.resver = res
           this.idCard = res.data.userInfo.idcard;
           this.email = res.data.userInfo.email;

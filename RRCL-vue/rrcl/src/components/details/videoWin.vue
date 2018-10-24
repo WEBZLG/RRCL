@@ -43,18 +43,6 @@ export default {
       }
     };
   },
-  // watch: {
-  //   videoPathURL: function(val) {
-  //     console.log(val);
-  //     this.$refs.videoPlayer.player.src(val);
-  //   },
-  //   state: function(val) {
-  //     console.log(val);
-  //     if (val) {
-  //       this.$refs.videoPlayer.player.pause();
-  //     }
-  //   }
-  // },
   computed: {
     player() {
       return this.$refs.videoPlayer.player;
@@ -93,10 +81,6 @@ export default {
       param.append("permId", this.videoParams.row.permId);
       param.append("action", action);
       param.append("duration", times);
-      console.log(
-        this.videoParams.row.permInfo.itemid,
-        this.videoParams.row.permId
-      );
       this.$axios
         .post(this.imgsrc + "/rock/log/addLog.action", param, {
           xhrFields: {
@@ -104,7 +88,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
 
           } else if (res.data.code === -1) {

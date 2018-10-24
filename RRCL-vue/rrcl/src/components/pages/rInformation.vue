@@ -157,7 +157,6 @@ export default {
   },
   methods: {
     birthdateValue(e) {
-      console.log(e);
       this.formValidate.birthdate = e;
     },
     handleSubmit(name) {
@@ -186,7 +185,6 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === 0) {
                 that.btnDis = true;
                 that.$Message.info(
@@ -224,7 +222,6 @@ export default {
           }
         )
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.companyList = res.data.list;
           } else if (res.data.code === -1) {

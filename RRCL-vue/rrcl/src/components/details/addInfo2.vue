@@ -43,12 +43,6 @@
             <FormItem label="联系地址" prop="address">
                 <Input v-model="formValidate.address"></Input>
             </FormItem>
-            <!-- <FormItem label="QQ">
-                <Input v-model="formValidate.qq"></Input>
-            </FormItem>
-            <FormItem label="微信">
-                <Input v-model="formValidate.weixin"></Input>
-            </FormItem> -->
         </Form>
         <div class="btns">
             <Button type="success" @click="handleReset('formValidate')">重置</Button>
@@ -115,7 +109,6 @@ export default {
       var that = this;
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log(valid);
           that.buttonLoading = true;
           var param = new URLSearchParams();
           param.append("userId", this.userId);
@@ -135,14 +128,12 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === 0) {
                 that.btnDis = true;
                 that.$Message.info(
                   "提交成功!请耐心等待审核，审核时间为1~3天！"
                 );
                 that.buttonLoading = false;
-                //跳到目标页
                 that.reload();
                 that.$router.push("/Home");
               } else if (res.data.code === -1) {
@@ -167,7 +158,6 @@ export default {
       this.idcardimg = res.path;
     },
     uploadError(res, file) {
-      console.log(res, file);
       this.$Message.error("上传失败！" + res.data.msg);
     }
   }

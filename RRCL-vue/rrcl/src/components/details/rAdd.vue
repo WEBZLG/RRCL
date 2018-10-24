@@ -153,45 +153,35 @@ export default {
   },
   methods: {
     otherValueChange: function() {
-      var obj = this;
-      this.$emit("otherValueR", obj.otherValue);
+      this.$emit("otherValueR", this.otherValue);
     },
     equipmentValueChange: function() {
-      var obj = this;
-      this.$emit("equipmentValueR", obj.equipmentValue);
+      this.$emit("equipmentValueR", this.equipmentValue);
     },
     watermarkValueChange: function() {
-      var obj = this;
-      this.$emit("watermarkValueR", obj.watermarkValue);
+      this.$emit("watermarkValueR", this.watermarkValue);
     },
     limitsValueChange: function() {
-      var obj = this;
-      this.$emit("limitsValueR", obj.limitsValue);
+      this.$emit("limitsValueR", this.limitsValue);
     },
     playTimeValueChange: function() {
-      var obj = this;
-      this.$emit("playTimeValueR", obj.playTimeValue);
+      this.$emit("playTimeValueR", this.playTimeValue);
     },
     playNumValueChange: function() {
-      var obj = this;
-      this.$emit("playNumValueR", obj.playNumValue);
+      this.$emit("playNumValueR", this.playNumValue);
     },
     starValueChange: function() {
-      var obj = this;
-      this.$emit("starValueR", obj.starValue);
+      this.$emit("starValueR", this.starValue);
     },
     stopValueChange: function() {
-      var obj = this;
-      this.$emit("stopValueR", obj.stopValue);
+      this.$emit("stopValueR", this.stopValue);
     },
     overValueChange: function(e) {
-      var obj = this;
-      obj.overValue = e;
-      this.$emit("overValueR", obj.overValue);
+      this.overValue = e;
+      this.$emit("overValueR", this.overValue);
     },
     typeValueChange: function() {
-      var obj = this;
-      this.$emit("typeValueR", obj.typeValue);
+      this.$emit("typeValueR", this.typeValue);
     },
     getUsers() {
       var that = this;
@@ -206,7 +196,6 @@ export default {
           }
         )
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.userList = res.data.list;
             // this.reload();

@@ -38,7 +38,7 @@
       }
     },
     mounted() {
-      console.log('this is current player instance object', this.player)
+      // console.log('this is current player instance object', this.player)
     },
     computed: {
       player() {
@@ -48,14 +48,14 @@
     methods: {
       // listen event
       onPlayerPlay(player) {
-        console.log('player play!', player)
+        // console.log('player play!', player)
       },
       onPlayerPause(player) {
-        console.log('player pause!', player)
+        // console.log('player pause!', player)
       },
 
       onPlayerEnded(player) {
-        console.log('player ended', playerCurrentState)
+        // console.log('player ended', playerCurrentState)
       }
     }
   }

@@ -185,7 +185,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           that.limitsList = [];
           if (res.data.code === 0) {
             if (res.data.perm.prvs[0] === 1) {
@@ -221,7 +220,6 @@ export default {
     getDownload(params) {
       this.videoParams = params;
       let videoUrl = this.videoPath + params.row.path;
-      console.log(videoUrl);
       this.downFile(videoUrl);
       this.PlayerPlay("download", "");
     },
@@ -246,7 +244,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             if (res.data.list === null) {
               res.data.list = [];
@@ -285,17 +282,12 @@ export default {
       var that = this;
       this.videoParams = params;
       this.videoPathURL = this.videoPath + this.videoParams.row.path;
-      // console.log(this.videoPathURL)
       var that = this;
       var param = new URLSearchParams();
       param.append("itemId", this.videoParams.row.permInfo.itemid);
       param.append("permId", this.videoParams.row.permId);
       param.append("action", "play");
       param.append("duration", 0);
-      console.log(
-        this.videoParams.row.permInfo.itemid,
-        this.videoParams.row.permId
-      );
       this.$axios
         .post(this.imgsrc + "/rock/log/addLog.action", param, {
           xhrFields: {
@@ -303,7 +295,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.playTime = res.data.perm.ptime[1];
             that.$Modal.confirm({
@@ -328,7 +319,6 @@ export default {
                 });
               },
               onOk: () => {
-                console.log(that.videoEndTime);
                 clearInterval(that.timer);
                 that.PlayerPlay("stop", that.timeIndex);
                 clearInterval(that.timer);
@@ -348,8 +338,6 @@ export default {
       var that = this;
       this.timer = setInterval(function() {
         that.timeIndex ++;
-        console.log(that.timeIndex);
-        console.log(that.playTime);
         if (that.timeIndex > that.playTime) {
           that.PlayerPlay("stop", that.timeIndex);
           that.$Message.error("视频播放时间用尽！");
@@ -372,12 +360,9 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.nowTime = res.data.sysTimestamp;
             that.overTime = res.data.perm.ptimestamp[1];
-
-            console.log(that.nowTime, that.overTime);
             if (
               params.row.permInfo.ptime[1] > 0 ||
               params.row.permInfo.ptime[1] === -1
@@ -504,7 +489,6 @@ export default {
                           }
                         )
                         .then(function(res) {
-                          console.log(res);
                           if (res.data.code === 0) {
                             that.$Message.info("提交成功!");
                             // this.reload();
@@ -542,10 +526,6 @@ export default {
       param.append("permId", this.videoParams.row.permId);
       param.append("action", action);
       param.append("duration", times);
-      console.log(
-        this.videoParams.row.permInfo.itemid,
-        this.videoParams.row.permId
-      );
       this.$axios
         .post(this.imgsrc + "/rock/log/addLog.action", param, {
           xhrFields: {
@@ -553,7 +533,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.playTime = res.data.perm.ptime[1];
             // this.reload();

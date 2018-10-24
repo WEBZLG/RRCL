@@ -228,7 +228,6 @@ export default {
     },
     // 单个块信息及交易信息
     view_block: function(val) {
-      // console.log(val)
       this.blocks.pop();
       this.transactions.pop();
       this.blocks.unshift(val.msg.block);

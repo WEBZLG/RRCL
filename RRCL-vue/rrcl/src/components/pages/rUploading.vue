@@ -89,7 +89,6 @@ export default {
             }
           })
           .then(res => {
-            console.log(res);
             if (res.data.code === 0) {
               that.$Message.info("提交成功！");
               this.buttonLoading = false;

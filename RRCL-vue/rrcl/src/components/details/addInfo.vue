@@ -124,10 +124,8 @@ export default {
     },
     handleSubmit(name) {
       var that = this;
-      console.log(this.formValidate.selectValue);
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log(valid);
           that.buttonLoading = true;
           var param = new URLSearchParams();
           param.append("userId", this.userId);
@@ -148,7 +146,6 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === 0) {
                 that.btnDis = true;
                 that.$Message.info(
@@ -181,7 +178,6 @@ export default {
       this.idcardimg = res.path;
     },
     uploadError(res, file) {
-      console.log(res, file);
       this.$Message.error("上传失败！" + res.data.msg);
     },
     // 获取公司列表
@@ -198,7 +194,6 @@ export default {
           }
         )
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.companyList = res.data.list;
           } else if (res.data.code === -1) {

@@ -185,9 +185,7 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === "0") {
-                console.log("修改成功");
                 that.btnDis = true;
                 that.buttonLoading = false;
                 that.$Message.info("修改成功!");
@@ -220,7 +218,6 @@ export default {
           param.append("companyName", that.formValidateR.company);
           param.append("companyApt", that.formValidateR.qualification);
           param.append("companyId", that.formValidateR.companyId);
-          console.log(that.formValidateR.companyId);
           param.append("type", 2);
           this.$axios
             .post(that.imgsrc + "/rock/user/modifyUserInfo.action", param, {
@@ -229,7 +226,6 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === "0") {
                 that.btnDis = true;
                 that.buttonLoading = false;
@@ -266,7 +262,6 @@ export default {
           }
         )
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.companyList = res.data.list;
           } else if (res.data.code === -1) {
@@ -291,7 +286,6 @@ export default {
           }
         )
         .then(function(res) {
-          console.log(res);
           if (res.data.status === 1) {
             that.isCheck = true;
           } else {
@@ -314,7 +308,6 @@ export default {
           }
           that.formValidateR.companyId = res.data.userInfo.companyId;
           that.formValidateR.qualification = res.data.userInfo.companyApt;
-          console.log(that.formValidateR.level);
         })
         .catch(function(error) {
           that.$Message.error("提交失败！" + error);
@@ -332,7 +325,6 @@ export default {
       this.cardImg = res.path;
     },
     uploadError(res, file) {
-      console.log(res, file);
       this.$Message.error("上传失败！" + res.data.msg);
     }
   }

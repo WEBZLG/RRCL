@@ -143,7 +143,6 @@ export default {
             }          
         })
         .then(res => {
-        console.log(res);
         if (res.data.code === 0) {
           for(var i in res.data.users){
               if(res.data.users[i].sex===1){
@@ -184,7 +183,6 @@ export default {
     },
     // 认证通过
     approve() {
-      console.log("通过");
       var that = this
       var param = new URLSearchParams();
       param.append("userId", this.postuserId);
@@ -208,7 +206,6 @@ export default {
     // 认证驳回
     reject() {
       var that = this
-      console.log("驳回");
       var param = new URLSearchParams();
       param.append("userId", this.postuserId);
       param.append("status", 3);
@@ -217,7 +214,6 @@ export default {
                 withCredentials: true
             }          
         }).then(function(res) {
-          console.log(res)
         if (res.data.code === 0) {
           that.$Message.info("提交成功");
           that.reload();

@@ -64,7 +64,6 @@ export default {
       thisTime = thisTime.replace(/-/g, "/");
       var newTime = new Date(thisTime);
       newTime = newTime.getTime() / 1000;
-      console.log(newTime);
       this.getLogos(newTime);
     },
     getLogos(timestamp) {
@@ -78,7 +77,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.actionList = [];
             if (res.data.list.length === 0) {

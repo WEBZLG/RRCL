@@ -55,7 +55,6 @@ export default {
           }
         )
         .then(res => {
-          console.log(res);
           if (res.data.code === 0) {
             that.$Message.info("退出成功！");
             //清除token

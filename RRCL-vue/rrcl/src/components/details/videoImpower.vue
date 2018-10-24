@@ -42,21 +42,17 @@ export default {
   },
   watch:{
     videoPathUrl:function(val){
-      console.log(val)
       this.$refs.videoPlayer.player.src(val)
     },
     state: function(val){
-      console.log(val)
         if(val){
           this.$refs.videoPlayer.player.pause()
         }
     }
   },
   mounted() {
-    console.log(this.videoPathURL)
     },
   created() {
-    console.log(this.videoPathURL)
   },
   computed: {
     player() {
@@ -83,10 +79,6 @@ export default {
       param.append("permId", this.videoParams.row.permId);
       param.append("action", "play");
       param.append("duration", 5);
-      console.log(
-        this.videoParams.row.permInfo.itemid,
-        this.videoParams.row.permId
-      );
       this.$axios
         .post(this.imgsrc + "/rock/log/addLog.action", param, {
           xhrFields: {
@@ -94,7 +86,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             // this.reload();
           } else if (res.data.code === -1) {

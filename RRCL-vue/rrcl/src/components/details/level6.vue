@@ -113,7 +113,6 @@ export default {
       var that = this;
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log(valid);
           that.buttonLoading = true;
           var param = new URLSearchParams();
           param.append("userId", this.userId);
@@ -133,7 +132,6 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === 0) {
                 that.btnDis = true;
                 that.$Message.info(
@@ -160,7 +158,6 @@ export default {
     // 获取个人信息
     getUserMesssge(){
       var that = this
-      console.log(that.userMessge.data.userInfo)
       this.formValidate.realname = that.userMessge.data.userInfo.realName
       this.formValidate.sex = that.userMessge.data.userInfo.sex
       this.formValidate.idcard = that.userMessge.data.userInfo.idcard
@@ -179,7 +176,6 @@ export default {
       this.idcardimg = res.path;
     },
     uploadError(res, file) {
-      console.log(res, file);
       this.$Message.error("上传失败！" + res.data.msg);
     }
   }

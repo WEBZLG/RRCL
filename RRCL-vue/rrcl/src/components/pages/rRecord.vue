@@ -97,7 +97,6 @@ export default {
           }
         })
         .then(res => {
-          console.log(res);
           if (res.data.code === 0) {
             that.totalPage = res.data.totalPage
             that.data = res.data.permList
@@ -125,7 +124,6 @@ export default {
           }
         })
         .then(res => {
-          console.log(res);
           if (res.data.code === 0) {
             that.totalPage = res.data.totalPage
             that.data = res.data.permList
@@ -207,7 +205,6 @@ export default {
       ]);
       //节点点击事件
       myDiagram.addDiagramListener("ObjectSingleClicked", function(e) {
-        console.log(e.subject.part.data);
         that.modalMessage = e.subject.part.data;
         that.modalDetails = true;
       });

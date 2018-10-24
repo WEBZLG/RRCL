@@ -172,7 +172,6 @@ export default {
           }
         })
         .then(res => {
-          console.log("邮箱" + res);
           if (res.data.code === 0) {
             that.$Message.info("发送成功！");
             that.buttonLoading = false;
@@ -202,7 +201,6 @@ export default {
               }
             })
             .then(res => {
-              console.log(res);
               if (res.data.code === 0) {
                 that.$Message.info("注册成功！");
                 that.$router.push({ path: "/userLogin" });

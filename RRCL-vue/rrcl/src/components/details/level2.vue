@@ -145,14 +145,12 @@ export default {
   },
   methods: {
     birthdateValue(e) {
-      console.log(e);
       this.formValidate.birthdate = e;
     },
     handleSubmit(name) {
       var that = this;
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log(valid);
           that.buttonLoading = true;
           var param = new URLSearchParams();
           //非认证
@@ -177,13 +175,11 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === 0) {
                 that.btnDis = true;
                 that.$Message.info(
                   "提交成功!请耐心等待审核，审核时间为1~3天！"
                 );
-                //跳到目标页
                 this.reload();
                 that.buttonLoading = false;
                 that.$router.push("/Home");
@@ -215,7 +211,6 @@ export default {
           }
         )
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             that.companyList = res.data.list;
           } else if (res.data.code === -1) {
@@ -229,7 +224,6 @@ export default {
     // 获取个人信息
     getUserMesssge(){
       var that = this
-      console.log(that.userMessge.data.userInfo)
       if(this.userMessge.data.userInfo.companyId===null){
         that.formValidate.companyId = ''
       }else{
@@ -259,7 +253,6 @@ export default {
       this.cardImg = res.path;
     },
     uploadError(res, file) {
-      console.log(res, file);
       this.$Message.error("上传失败！" + res.data.msg);
     }
   }

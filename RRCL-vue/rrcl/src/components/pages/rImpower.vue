@@ -35,14 +35,12 @@
         },
         methods:{
             routeTo(e) {
-                // console.log(e);
                 this.$router.push(e);
             },
             checkNav(){
                 let path = this.$route.matched[1].path  // 获取到地址拦上#号后面的url地址
                 if(path.indexOf('/impowerVideo') != -1){  // 是否包含，-1是包含，0不包含
                     // return this.$route.path.replace('/','impowerVideo');
-                    console.log(99)
                 } 
             }
         }

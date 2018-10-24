@@ -158,7 +158,6 @@ export default {
     },
     // 下载
     getDownload(params) {
-      console.log("下载视频")
       this.videoParams = params;
       let url = this.videoPath + params.row.path;
       this.downjs(url,"demo.mp4","video/mp4")
@@ -340,7 +339,6 @@ export default {
           }
         })
         .then(function(res) {
-          console.log(res);
           if (res.data.code === 0) {
             if (res.data.list === null) {
               res.data.list = [];
@@ -377,7 +375,6 @@ export default {
     openModal(params) {
       var that = this;
       that.params = params;
-      console.log(params);
       this.$Modal.confirm({
         scrollable: true,
         okText: "提交",
@@ -464,7 +461,6 @@ export default {
           } else {
             limitsArry.push(0);
           }
-          console.log(newPlayTime, newPlayNum);
           var param = new URLSearchParams();
           param.append("userId", this.otherValueR);
           param.append("tid", params.row.tid);
@@ -485,7 +481,6 @@ export default {
               }
             })
             .then(function(res) {
-              console.log(res);
               if (res.data.code === 0) {
                 that.$Message.info("提交成功!");
                 // this.reload();
