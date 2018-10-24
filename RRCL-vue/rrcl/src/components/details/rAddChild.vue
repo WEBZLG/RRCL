@@ -1,3 +1,4 @@
+<!--授权的视频-授权弹窗-->
 <template>
     <Row>
         <div class="wrapper">
@@ -112,7 +113,6 @@
     </Row>
 </template>
 <script>
-import Vue from "vue";
 export default {
   props: {
     parentParams: {}

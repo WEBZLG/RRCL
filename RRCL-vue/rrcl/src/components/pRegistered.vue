@@ -1,3 +1,4 @@
+<!--手机注册页面-->
 <template>
   <div>
         <Form ref="ruleForm" :model="ruleForm" :rules="rules">
@@ -51,37 +52,41 @@
 import axios from "../axios.js";
 export default {
   data() {
-    var username = (rule, value, callback)=> {
-                if (value === '') {
-                    callback(new Error('请输入用户名'));
-                } else if(!/^[a-zA-Z0-9_]{4,16}$/.test(value)){
-                    return callback(new Error("用户名由4到16位（字母，数字，下划线）组成"))
-                } else{
-                callback();
-                }
-            };
-    var pass =(rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请输入密码'));
-                } else {
-                    if (this.ruleForm.checkPass !== '') {
-                        this.$refs.ruleForm.validateField('checkPass');
-                    }else if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/.test(value)){
-                        return callback(new Error("密码由6-16字母和数字组成，不能是纯数字或纯英文"))
-                    }else{
-                        callback();
-                        }
-                    }
-                };
-    var checkPass = (rule, value, callback)=> {
-                if (value === '') {
-                    return callback(new Error('请再次输入密码'));
-                } else if(value !== this.ruleForm.pass) {
-                    return callback(new Error("密码不一致"))
-                } else {
-                    callback();
-                }
-            };
+    var username = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入用户名"));
+      } else if (!/^[a-zA-Z0-9_]{4,16}$/.test(value)) {
+        return callback(new Error("用户名由4到16位（字母，数字，下划线）组成"));
+      } else {
+        callback();
+      }
+    };
+    var pass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else {
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("checkPass");
+        } else if (
+          !/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/.test(value)
+        ) {
+          return callback(
+            new Error("密码由6-16字母和数字组成，不能是纯数字或纯英文")
+          );
+        } else {
+          callback();
+        }
+      }
+    };
+    var checkPass = (rule, value, callback) => {
+      if (value === "") {
+        return callback(new Error("请再次输入密码"));
+      } else if (value !== this.ruleForm.pass) {
+        return callback(new Error("密码不一致"));
+      } else {
+        callback();
+      }
+    };
     // var idcard = (rule, value, callback)=> {
     //   var carddl = /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
     //   var cardtw =/[A-Z][0-9]{9}/;
@@ -95,128 +100,128 @@ export default {
     //         return callback(new Error("请输入正确证件号码"))
     //     }
     // };
-    var phonenum = (rule, value, callback)=> {
-        if (value === '') {
-            callback(new Error('请输入手机号'));
-        } else if(!/^1[3-8][0-9]{9}$/.test(value)){
-            return callback(new Error("请输入正确手机号码"))
-        } else{
-          callback();
-        }
+    var phonenum = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入手机号"));
+      } else if (!/^1[3-8][0-9]{9}$/.test(value)) {
+        return callback(new Error("请输入正确手机号码"));
+      } else {
+        callback();
+      }
     };
-    var validateCode = (rule, value, callback)=> {
-        if (value === '') {
-            callback(new Error('请输入验证码'));
-        } else if(!/^[0-9]*$/.test(value)){
-            return callback(new Error("请输入正确验证码"))
-        } else{
-          callback();
-        }
-    }
+    var validateCode = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入验证码"));
+      } else if (!/^[0-9]*$/.test(value)) {
+        return callback(new Error("请输入正确验证码"));
+      } else {
+        callback();
+      }
+    };
     return {
-      validateName: '获取验证码',
+      validateName: "获取验证码",
       single: true,
       showBtn: true,
-      count:'',
-      timer:null,
+      count: "",
+      timer: null,
       ruleForm: {
-        pass: '',
-        checkPass: '',
-        phonenum:'',
-        validateCode:'',
-        username:''
+        pass: "",
+        checkPass: "",
+        phonenum: "",
+        validateCode: "",
+        username: ""
       },
       rules: {
-        username:[{
-            validator:username,
+        username: [
+          {
+            validator: username,
             required: true,
             trigger: "blur"
-        }],
+          }
+        ],
         pass: [
           {
-            validator:pass,
+            validator: pass,
             required: true,
             trigger: "blur",
-            min:6
+            min: 6
           }
         ],
         checkPass: [
           {
-            validator:checkPass,
+            validator: checkPass,
             required: true,
             trigger: "blur"
           }
         ],
         phonenum: [
           {
-            validator:phonenum,
+            validator: phonenum,
             required: true,
             trigger: "blur"
           }
         ],
         validateCode: [
           {
-            validator:validateCode,
+            validator: validateCode,
             required: true,
             trigger: "blur"
           }
         ]
       }
-    }
-
+    };
   },
   methods: {
-      jump:function(){
-        this.$router.push({ path: '/userLogin'})
-      },
+    jump: function() {
+      this.$router.push({ path: "/userLogin" });
+    },
     handleSubmit(name) {
-        this.$refs[name].validate(valid => {
-            if (valid) {
-                axios.userRegister(this.ruleForm)
-                .then(({}) => {
-                    if (data.success) {
-                        this.$message({
-                        type: 'success',
-                        message: '注册成功'
-                        });
-                    } else {
-                        this.$message({
-                        type: 'info',
-                        message: '用户名已经存在'
-                        });
-                    }
-                })
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          axios.userRegister(this.ruleForm).then(({}) => {
+            if (data.success) {
+              this.$message({
+                type: "success",
+                message: "注册成功"
+              });
+            } else {
+              this.$message({
+                type: "info",
+                message: "用户名已经存在"
+              });
             }
-        });
+          });
+        }
+      });
     },
     // 手机验证码定时器
-    getCode:function(){
-     const TIME_COUNT = 60;
-     if (!this.timer) {
-       this.count = TIME_COUNT;
-       this.showBtn = false;
-       this.timer = setInterval(() => {
-       if (this.count > 0 && this.count <= TIME_COUNT) {
-         this.count--;
-        } else {
-         this.showBtn = true;
-         clearInterval(this.timer);
-         this.timer = null;
-        }
-       }, 1000)
+    getCode: function() {
+      const TIME_COUNT = 60;
+      if (!this.timer) {
+        this.count = TIME_COUNT;
+        this.showBtn = false;
+        this.timer = setInterval(() => {
+          if (this.count > 0 && this.count <= TIME_COUNT) {
+            this.count--;
+          } else {
+            this.showBtn = true;
+            clearInterval(this.timer);
+            this.timer = null;
+          }
+        }, 1000);
       }
     }
   }
 };
 </script>
 <style>
-.codeNum.ivu-form-item{
-    margin-bottom: 0
+.codeNum.ivu-form-item {
+  margin-bottom: 0;
 }
-.codeNum .ivu-form-item-error-tip{
-    top: 63%;
+.codeNum .ivu-form-item-error-tip {
+  top: 63%;
 }
-.checkBtn{
-    float: right;
+.checkBtn {
+  float: right;
 }
 </style>

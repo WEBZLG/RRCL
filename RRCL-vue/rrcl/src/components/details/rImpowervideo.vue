@@ -1,3 +1,4 @@
+<!--授权视频列表及一系列操作-->
 <template>
     <div>
         <Table border :columns="columns" :data="data"></Table>
@@ -21,8 +22,6 @@
 import axios from "axios";
 import add from "./rAddChild.vue";
 import addd from "./videoWin.vue";
-// import { download } from '../../assets/js/download.js'
-import download from "../../assets/js/download.js";
 export default {
   inject:["reload"],
   data() {
@@ -32,7 +31,6 @@ export default {
       imgsrc: domain.testUrl,
       tid: "",
       itemId: "",
-      // adminValueR:'',
       otherValueR: "",
       equipmentValueR: "",
       watermarkValueR: "",

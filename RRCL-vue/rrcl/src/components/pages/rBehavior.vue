@@ -1,3 +1,4 @@
+<!--行为追踪-->
 <template>
     <div>
         <Row>
@@ -27,10 +28,10 @@ export default {
   data() {
     return {
       value: "",
-      isShow:false,
-      imgsrc:domain.testUrl,
-      user:'',
-      actionList:[]
+      isShow: false,
+      imgsrc: domain.testUrl,
+      user: "",
+      actionList: []
     };
   },
   components: {
@@ -38,38 +39,38 @@ export default {
     TimelineItem,
     TimelineTitle
   },
-  created(){
-      //获取当前时间
-        var date = new Date();
-        var year = date.getFullYear();
-        var month = date.getMonth() + 1;
-        var day = date.getDate();
-        if (month < 10) {
-            month = "0" + month;
-        }
-        if (day < 10) {
-            day = "0" + day;
-        }
-        var nowDate = year + "-" + month + "-" + day;
-        nowDate = nowDate.replace(/-/g, '/');
-        var newTime = new Date(nowDate);
-        newTime = newTime.getTime()/1000;
-        this.getLogos(newTime)
+  created() {
+    //获取当前时间
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (day < 10) {
+      day = "0" + day;
+    }
+    var nowDate = year + "-" + month + "-" + day;
+    nowDate = nowDate.replace(/-/g, "/");
+    var newTime = new Date(nowDate);
+    newTime = newTime.getTime() / 1000;
+    this.getLogos(newTime);
   },
   methods: {
     changeValue(e) {
-        this.value = e;
-        var thisTime = this.value;
-        thisTime = thisTime.replace(/-/g, '/');
-        var newTime = new Date(thisTime);
-        newTime = newTime.getTime()/1000;
+      this.value = e;
+      var thisTime = this.value;
+      thisTime = thisTime.replace(/-/g, "/");
+      var newTime = new Date(thisTime);
+      newTime = newTime.getTime() / 1000;
       console.log(newTime);
-        this.getLogos(newTime)
+      this.getLogos(newTime);
     },
     getLogos(timestamp) {
       var that = this;
       var param = new URLSearchParams();
-      param.append("timestamp",timestamp);
+      param.append("timestamp", timestamp);
       this.$axios
         .post(this.imgsrc + "/rock/log/getLogs.action", param, {
           xhrFields: {
@@ -79,33 +80,32 @@ export default {
         .then(function(res) {
           console.log(res);
           if (res.data.code === 0) {
-            that.actionList = []
-            if(res.data.list.length===0){
-              that.isShow = true
-            }else{
-              that.isShow = false
+            that.actionList = [];
+            if (res.data.list.length === 0) {
+              that.isShow = true;
+            } else {
+              that.isShow = false;
             }
-            for(var i in res.data.list){
-              switch(res.data.list[i].operate){
-                case "addUser" :
-                res.data.list[i].operate ="添加用户"
-                break;
-                case "uplItem" :
-                res.data.list[i].operate ="上传资源"
-                break;
-                case "addPerm" :
-                res.data.list[i].operate ="资源授权"
-                break;
-                case "play" :
-                res.data.list[i].operate ="播放视频"
-                break;
-                case "stop" :
-                res.data.list[i].operate ="停止视频用户"
-                break;
+            for (var i in res.data.list) {
+              switch (res.data.list[i].operate) {
+                case "addUser":
+                  res.data.list[i].operate = "添加用户";
+                  break;
+                case "uplItem":
+                  res.data.list[i].operate = "上传资源";
+                  break;
+                case "addPerm":
+                  res.data.list[i].operate = "资源授权";
+                  break;
+                case "play":
+                  res.data.list[i].operate = "播放视频";
+                  break;
+                case "stop":
+                  res.data.list[i].operate = "停止视频用户";
+                  break;
               }
-              that.actionList = res.data.list
+              that.actionList = res.data.list;
             }
-            console.log(that.actionList.length)
           } else if (res.data.code === -1) {
             that.$Message.error("获取数据失败!" + res.data.msg);
           }
@@ -116,7 +116,6 @@ export default {
     }
   }
 };
-
 </script>
 
 <style>

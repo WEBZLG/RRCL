@@ -1,22 +1,19 @@
+<!--个人信息页面-->
 <template>
     <div class="personInfro">
        <div class="supernatant">
            <div class="changeMessage">
                <a href="#" @click="jumpChangeInformation()" v-show="isShow1">修改资料</a>
-               <a href="#" @click="jumpInformation()" v-show="isShow2">账户认证</a>
+               <a href="#" @click="jumpInformation()" v-show="isShow2" :disabled = "isDis">账户认证</a>
                </div>
            <div class="personHeader">
                <Avatar src="http://www.qqzhi.com/uploadpic/2015-01-15/202249542.jpg" size="large"/>
                 <div>
-                    <h1>{{this.userName}}</h1>
+                    <h1>{{this.realName}}</h1>
+                    <p>{{this.sex}}</p>
                 </div>
            </div>
            <div class="personDetails">
-               <div>
-                    <label for="sex">
-                        性别：<span>{{this.sex}}</span>
-                    </label>
-               </div>
                <div>
                     <label for="idcard">
                         身份证号码：<span>{{this.idCard}}</span>
@@ -32,9 +29,14 @@
                         手机/电话：<span>{{this.phone}}</span>
                     </label>
                </div>
-                <div>
+               <div>
                     <label for="email">
                         邮箱：<span>{{this.email}}</span>
+                    </label>
+               </div>
+               <div>
+                    <label for="addr">
+                        地址：<span>{{this.addr}}</span>
                     </label>
                </div>
                <div>
@@ -47,7 +49,6 @@
                         账户修改认证状态：<span>{{this.changeStatus}}</span>
                     </label>
                </div>
-            
            </div>
        </div>
     </div>
@@ -59,21 +60,24 @@ export default {
     return {
       imgsrc: domain.testUrl,
       value: "",
-      userName: "",
+      realName: "",
       idCard: "",
       email: "",
       phone: "",
       sex: "",
       level: "",
       status: "",
+      addr:"",
       changeStatus: "",
       isShow: false,
-      isShow1:true,
-      isShow2:false
+      isShow1: true,
+      isShow2: false,
+      isDis:false,
+      resver : ''
     };
   },
   created() {
-    this.userName = this.$store.state.user;
+    // this.userName = this.$store.state.user;
     this.getPersonInformation();
   },
   methods: {
@@ -99,10 +103,12 @@ export default {
         )
         .then(res => {
           console.log(res);
-
+          this.resver = res
           this.idCard = res.data.userInfo.idcard;
           this.email = res.data.userInfo.email;
           this.phone = res.data.userInfo.phone;
+          this.addr = res.data.userInfo.addr;
+          this.realName = res.data.userInfo.realName;
           if (res.data.changeStatus === 1) {
             this.isShow = true;
             this.changeStatus = "审核中";
@@ -127,6 +133,7 @@ export default {
               this.status = "审核中";
               this.isShow1 = false;
               this.isShow2 = true;
+              this.isDis = true;
               break;
             case 2:
               this.status = "通过";
@@ -157,7 +164,22 @@ export default {
       this.$router.push({ path: "/ChangeInformation" });
     },
     jumpInformation() {
-      this.$router.push({ path: "/Information" });
+      var that=this
+      if(this.resver.data.userInfo.status===0){
+        this.$router.push({ path: "/Information" });
+      }else{
+        switch (that.resver.data.userInfo.level) {
+          case 2:
+            that.$router.push({ path: "/Level2",query:{params:that.resver} });
+            break;
+          case 5:
+            that.$router.push({ path: "/Level5",query:{params:that.resver} });
+            break;
+          case 6:
+            that.$router.push({ path: "/Level6",query:{params:that.resver} });
+            break;
+        }
+      }
     }
   }
 };

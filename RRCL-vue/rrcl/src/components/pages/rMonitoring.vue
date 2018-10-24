@@ -1,3 +1,4 @@
+<!--区块链监控页面-->
 <template>
     <div class="main">
         <div class="monitorDate">
@@ -141,8 +142,8 @@ export default {
       nodeStatus: "",
       nodeObject: {},
       nodeLinks: [],
-      linkPeer:'',
-      pathNode:'',
+      linkPeer: "",
+      pathNode: "",
       cityList: [
         {
           value: "30000",
@@ -261,9 +262,9 @@ export default {
       this.array = [];
     }
   },
-  components:{
+  components: {
     addNode
-    },
+  },
   mounted() {
     // clearInterval(this.timer)
     // 节点监控
@@ -272,7 +273,7 @@ export default {
   created() {
     this.getTrade();
     this.setTimer();
-    this.pathNode = "../../assets/computer.png"
+    this.pathNode = "../../assets/computer.png";
   },
   updated() {},
   distroyed: function() {
@@ -313,10 +314,10 @@ export default {
       this.array.push(myDate.toLocaleString());
     },
     // 添加节点
-    addPeer(data){
-      var item ={
-        "link":data
-      }
+    addPeer(data) {
+      var item = {
+        link: data
+      };
       this.$socket.emit("addPeer", item);
     },
     echarts() {
@@ -344,7 +345,7 @@ export default {
         yAxis: {
           name: "差值",
           minInterval: 1,
-          boundaryGap : [ 0, 0.1 ],
+          boundaryGap: [0, 0.1],
           splitLine: {
             show: true,
             lineStyle: {
@@ -396,7 +397,7 @@ export default {
             label: {
               normal: {
                 show: true,
-                 position:'bottom'
+                position: "bottom"
               }
             },
             edgeSymbol: ["circle"],
@@ -460,7 +461,7 @@ export default {
           if (this.linkPeer == "") {
             this.$Message.error("请输入IP+端口!");
           } else {
-            this.addPeer(this.linkPeer)
+            this.addPeer(this.linkPeer);
           }
         }
       });
@@ -607,17 +608,12 @@ h4 {
   left: 0px;
   top: -2px;
 }
-/* .round div {
-  background: #80e7ae;
-} */
+
 .round div {
   width: 20px;
   height: 20px;
 }
-/* .round div:nth-child(2) {
-  width: 20px;
-  height: 20px;
-} */
+
 .round div:last-child {
   width: 30px;
   height: 30px;

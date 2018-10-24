@@ -7,7 +7,7 @@ Vue.use(iView);
 Vue.use(Router)
 
 const router = new Router({
-    // mode: 'history',
+    mode: 'history',
     base: '/dist/',
     routes: [{ path: '/', redirect: '/Login' },
         {
@@ -34,12 +34,12 @@ const router = new Router({
         {
             path: '/Error',
             name: 'Error',
-            meta: { requireAuth: true }, // 判断是否需要登录
+            meta: { requireAuth: true },
             component: resolve => require(['../components/pages/Error.vue'], resolve)
         },
         {
             path: '/Home',
-            meta: { requireAuth: true }, // 判断是否需要登录
+            meta: { requireAuth: true },
             component: resolve => require(['../components/Home.vue'], resolve),
             children: [{
                     path: '',
@@ -110,41 +110,59 @@ const router = new Router({
                 {
                     path: '/Information',
                     name: 'Information',
-                    meta: { requireAuth: true }, // 判断是否需要登录
+                    meta: { requireAuth: true },
                     component: resolve => require(['../components/pages/rInformation.vue'], resolve)
                 },
                 {
                     path: '/ChangeInformation',
                     name: 'ChangeInformation',
-                    meta: { requireAuth: true }, // 判断是否需要登录
+                    meta: { requireAuth: true },
                     component: resolve => require(['../components/pages/rChangeInformation.vue'], resolve)
                 },
                 {
                     path: '/PersonInfor',
                     name: 'PersonInfor',
-                    meta: { requireAuth: true }, // 判断是否需要登录
+                    meta: { requireAuth: true },
                     component: resolve => require(['../components/pages/rPersonInfor.vue'], resolve)
+                },
+                {
+                    path: '/Level2',
+                    name: 'Level2',
+                    meta: { requireAuth: true },
+                    component: resolve => require(['../components/details/Level2.vue'], resolve)
+                },
+                {
+                    path: '/Level5',
+                    name: 'Level5',
+                    meta: { requireAuth: true },
+                    component: resolve => require(['../components/details/Level5.vue'], resolve)
+                },
+                {
+                    path: '/Level6',
+                    name: 'Level6',
+                    meta: { requireAuth: true },
+                    component: resolve => require(['../components/details/Level6.vue'], resolve)
                 }
             ]
         },
     ]
 });
 //注册全局钩子用来拦截导航
-router.beforeEach((to, from, next) => {
-    // iView.Spin.show();
-    if (to.matched.some(res => res.meta.requireAuth)) { // 判断该路由是否需要登录权限
-        if (store.state.token) { // 通过vuex state获取当前的token是否存在
-            next();
-        } else {
-            next({
-                path: '/login',
-                query: { redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
-            })
-        }
-    } else {
-        next();
-    }
-})
+// router.beforeEach((to, from, next) => {
+//     // iView.Spin.show();
+//     if (to.matched.some(res => res.meta.requireAuth)) { // 判断该路由是否需要登录权限
+//         if (store.state.token) { // 通过vuex state获取当前的token是否存在
+//             next();
+//         } else {
+//             next({
+//                 path: '/login',
+//                 query: { redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+//             })
+//         }
+//     } else {
+//         next();
+//     }
+// })
 router.afterEach(() => {
     // iView.Spin.hide();
 })

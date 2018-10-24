@@ -1,6 +1,7 @@
+<!--欢迎页面-->
 <template>
 	<div class="main">
-		<h3>想获得更多权限，请完善个人信息==><a href="#" @click="jumpInformation()">完善信息</a></h3>
+		<h3>hello world</h3>
 	</div>
 </template>
 
@@ -12,10 +13,8 @@ export default {
 		}
 	},
 	methods:{
-		jumpInformation(){
-			this.$router.push({ path: "/Information" });
-		}
-	}
+                               
+	},
 }
 </script>
 

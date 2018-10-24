@@ -1,3 +1,4 @@
+<!--资源上传页面-->
 <template>
     <div class="fileUploading">
         <div class="fileInput">
@@ -41,28 +42,26 @@
 </template>
 
 <script>
-import confirm from '../details/confirm'
+import confirm from "../details/confirm";
 export default {
-  inject:["reload"],
+  inject: ["reload"],
   data() {
     return {
-      imgsrc:domain.testUrl,
-      buttonLoading:false,
-      butText:"提交",
+      imgsrc: domain.testUrl,
+      buttonLoading: false,
+      butText: "提交",
       fileTitle: "",
       fileDescript: "",
       fileType: "1",
       filePath: "",
-      action:domain.testUrl+'/rock/file/upload.action'
+      action: domain.testUrl + "/rock/file/upload.action"
     };
   },
-  components:{
+  components: {
     confirm
   },
   methods: {
-    handleUpload() {
-
-    },
+    handleUpload() {},
     uploadSuccess(res, file) {
       this.$Message.info("上传成功！");
       this.filePath = res.path;
@@ -73,17 +72,18 @@ export default {
     submitFile() {
       var that = this;
       if (this.filePath === "" || null) {
-          this.$Message.error("请上传视频或文件！");
-      return false;
+        this.$Message.error("请上传视频或文件！");
+        return false;
       } else {
         this.buttonLoading = true;
-        this.butText = "Loading"
+        this.butText = "Loading";
         var param = new URLSearchParams();
         param.append("title", this.fileTitle);
         param.append("content", this.fileDescript);
         param.append("type", this.fileType);
         param.append("path", this.filePath);
-        this.$axios.post(this.imgsrc+"/rock/item/addItem.action", param, {
+        this.$axios
+          .post(this.imgsrc + "/rock/item/addItem.action", param, {
             xhrFields: {
               withCredentials: true
             }
@@ -93,18 +93,18 @@ export default {
             if (res.data.code === 0) {
               that.$Message.info("提交成功！");
               this.buttonLoading = false;
-              this.butText = "提交"
+              this.butText = "提交";
               this.reload();
             } else if (res.data.code === -1) {
               that.$Message.error("提交失败!" + res.data.msg);
               this.buttonLoading = false;
-              this.butText = "提交"
+              this.butText = "提交";
             }
           })
           .catch(function(error) {
             that.$Message.error("提交失败！" + error);
             this.buttonLoading = false;
-            this.butText = "提交"
+            this.butText = "提交";
           });
       }
     }

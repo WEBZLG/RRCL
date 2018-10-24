@@ -7,7 +7,7 @@
 				</div>
 				<h3>滚石国际音乐有限公司</h3>	
 			</Col>
-			<Col span="3" offset="11">
+			<Col span="14">
 				<div class="headLogo">
 					<Avatar src="http://www.qqzhi.com/uploadpic/2015-01-15/202249542.jpg" />
 					<Dropdown trigger="click" style="margin-left: 20px">
@@ -17,7 +17,7 @@
 							</a>
 							<DropdownMenu slot="list">
 									<DropdownItem>
-										<a href="javascript:void(0)" @click="logout">
+										<a href="javascript:void(0)" @click="logout" class="liItem">
 											退出登录
 										</a>
 									</DropdownItem>
@@ -30,40 +30,31 @@
 </template>
 
 <script>
-import Vue from "vue";
-// import axios from "../axios.js";
 export default {
   data() {
     return {
-      imgsrc:domain.testUrl,
+      imgsrc: domain.testUrl,
       users: "",
       admin: ""
     };
   },
   created() {
     this.admin = this.$store.state.user;
-    // axios.getUser().then(response => {
-    // 	console.log(123)
-    //   if (response.status === 401) {
-    //     //不成功跳转回登录页
-    //     this.$router.push("/Login");
-    //     //并且清除掉这个token
-    //     this.$store.dispatch("UserLogout");
-    //   } else {
-    //     //成功了就把data.result里的数据放入users，在页面展示
-    //     this.users = response.data.result;
-    //   }
-    // });
   },
   methods: {
     logout() {
       var that = this;
-      this.$axios.get( this.imgsrc+"/rock/logout.action",{},{
+      this.$axios
+        .get(
+          this.imgsrc + "/rock/logout.action",
+          {},
+          {
             xhrFields: {
               withCredentials: true
             }
           }
-        ).then(res => {
+        )
+        .then(res => {
           console.log(res);
           if (res.data.code === 0) {
             that.$Message.info("退出成功！");
@@ -76,7 +67,8 @@ export default {
             that.$store.dispatch("UserLogout");
             that.$router.push("/Login");
           }
-        }).catch(function(error) {
+        })
+        .catch(function(error) {
           that.$Message.error("退出失败！" + error);
         });
     }
@@ -111,5 +103,10 @@ h3 {
 }
 .ivu-dropdown-item {
   text-align: center;
+}
+.liItem {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>

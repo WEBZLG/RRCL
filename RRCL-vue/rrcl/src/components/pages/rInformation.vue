@@ -1,3 +1,4 @@
+<!--账户信息认证-->
 <template>
     <div class="information">
         <div class="infor">
@@ -34,9 +35,9 @@
                                 <Radio label="2">女</Radio>
                             </RadioGroup>
                         </FormItem>
-                        <FormItem label="年龄" prop="age">
+                        <!-- <FormItem label="年龄" prop="age">
                             <Input v-model="formValidate.age"></Input>
-                        </FormItem>
+                        </FormItem> -->
                         <FormItem label="公司名称" prop="company">
                             <Input v-model="formValidate.company"></Input>
                         </FormItem>
@@ -69,16 +70,10 @@
                         <FormItem label="Email" prop="email">
                             <Input v-model="formValidate.email"></Input>
                         </FormItem>
-                        <!-- <FormItem label="QQ">
-                            <Input v-model="formValidate.qq"></Input>
-                        </FormItem>
-                        <FormItem label="微信">
-                            <Input v-model="formValidate.weixin"></Input>
-                        </FormItem> -->
                     </Form>
                     <div class="btns">
                         <Button type="success" @click="handleReset('formValidate')">重置</Button>
-                        <Button type="primary" @click="handleSubmit('formValidate')" :disabled='btnDis'>提交</Button>
+                        <Button type="primary" @click="handleSubmit('formValidate')" :disabled='btnDis' :loading = "buttonLoading">提交</Button>
                     </div>
                 </TabPane>
                 <TabPane label="企业/公司员工认证" icon="ios-person">
@@ -92,187 +87,184 @@
     </div>
 </template>
 <script>
-import addInfo from '../details/addInfo'
-import addInfo2 from '../details/addInfo2'
-    export default {
-        inject:["reload"],
-        data () {
-            return {
-                imgsrc:domain.testUrl,
-                credentials: true,
-                userId:'',
-                cardImg:'',
-                companyImg:'',
-                btnDis:false,
-                companyList:'',
-                action1:domain.testUrl+'/rock/file/upload.action',
-                action2:domain.testUrl+'/rock/file/upload.action',
-                formValidate: {
-                    realname: '',
-                    Address:'',
-                    sex: '',
-                    idcard:'',
-                    birthdate:'',
-                    age: '',
-                    company:'',
-                    qualification:'',
-                    call:'',
-                    email:'',
-                    // qq:'',
-                    // weixin:'',
-                    level:'2',
-                    companyId:''
-                },
-                ruleValidate: {
-                    realname: [
-                        { required: true, message: '用户名不能为空', trigger: 'blur' }
-                    ],
-                    idcard: [
-                        { required: true, message: '身份证号不能为空', trigger: 'blur' }
-                    ],
-                    birthdate: [
-                        { required: true,  type: 'string', message: '出生日期不能为空', trigger: 'change' }
-                    ],
-                    age: [
-                        { required: true, message: '年龄不能为空', trigger: 'blur' }
-                    ],
-                    sex: [
-                        { required: true, message: '请选择性别', trigger: 'blur' }
-                    ],
-                    company: [
-                        { required: true, message: '公司名称不能为空', trigger: 'blur' }
-                    ],
-                    Address: [
-                        { required: true, message: '联系地址不能为空', trigger: 'blur' }
-                    ],
-                    // qualification: [
-                    //     {required:true}
-                    //     // { required: true, message: '公司资质不能为空', trigger: 'blur' },
-                    // ],
-                    call: [
-                        { required: true, message: '联系电话不能为空', trigger: 'blur' },
-                    ],
-                    email: [
-                        { required: true, message: '邮箱不能为空', trigger: 'blur' }
-                    ],
-                    // idcardimg: [
-                    //     {required:true}
-                    //     // { required: true, message: '证件不能为空', trigger: 'blur' }
-                    // ]
-                }
+import addInfo from "../details/addInfo";
+import addInfo2 from "../details/addInfo2";
+export default {
+  inject: ["reload"],
+  data() {
+    return {
+      imgsrc: domain.testUrl,
+      credentials: true,
+      userId: "",
+      cardImg: "",
+      companyImg: "",
+      btnDis: false,
+      buttonLoading: false,
+      companyList: "",
+      action1: domain.testUrl + "/rock/file/upload.action",
+      action2: domain.testUrl + "/rock/file/upload.action",
+      formValidate: {
+        realname: "",
+        Address: "",
+        sex: "",
+        idcard: "",
+        birthdate: "",
+        age: "",
+        company: "",
+        qualification: "",
+        call: "",
+        email: "",
+        level: "2",
+        companyId: ""
+      },
+      ruleValidate: {
+        realname: [
+          { required: true, message: "用户名不能为空", trigger: "blur" }
+        ],
+        idcard: [
+          { required: true, message: "身份证号不能为空", trigger: "blur" }
+        ],
+        birthdate: [
+          {
+            required: true,
+            type: "string",
+            message: "出生日期不能为空",
+            trigger: "change"
+          }
+        ],
+        age: [{ required: true, message: "年龄不能为空", trigger: "blur" }],
+        sex: [{ required: true, message: "请选择性别", trigger: "blur" }],
+        company: [
+          { required: true, message: "公司名称不能为空", trigger: "blur" }
+        ],
+        Address: [
+          { required: true, message: "联系地址不能为空", trigger: "blur" }
+        ],
+        call: [
+          { required: true, message: "联系电话不能为空", trigger: "blur" }
+        ],
+        email: [{ required: true, message: "邮箱不能为空", trigger: "blur" }]
+      }
+    };
+  },
+  components: {
+    addInfo,
+    addInfo2
+  },
+  created() {
+    this.userId = this.$store.state.token;
+    this.getCompany();
+  },
+  methods: {
+    birthdateValue(e) {
+      console.log(e);
+      this.formValidate.birthdate = e;
+    },
+    handleSubmit(name) {
+      var that = this;
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          that.buttonLoading = true;
+          var param = new URLSearchParams();
+          param.append("userId", that.userId);
+          param.append("email", that.formValidate.email);
+          param.append("realName", that.formValidate.realname);
+          param.append("idcard", that.formValidate.idcard);
+          param.append("phone", that.formValidate.call);
+          param.append("idcardPhoto", this.cardImg);
+          param.append("addr", that.formValidate.Address);
+          param.append("birthdayStr", that.formValidate.birthdate);
+          param.append("sex", that.formValidate.sex);
+          param.append("level", that.formValidate.level);
+          param.append("companyId", that.formValidate.companyId);
+          param.append("companyInfo.name", that.formValidate.company);
+          param.append("companyInfo.apt", that.companyImg);
+          that.$axios
+            .post(that.imgsrc + "/rock/auth/submitInfo.action", param, {
+              xhrFields: {
+                withCredentials: true
+              }
+            })
+            .then(function(res) {
+              console.log(res);
+              if (res.data.code === 0) {
+                that.btnDis = true;
+                that.$Message.info(
+                  "提交成功!请耐心等待审核，审核时间为1~3天！"
+                );
+                //跳到目标页
+                that.reload();
+                that.buttonLoading = false;
+                that.$router.push("/Home");
+              } else if (res.data.code === -1) {
+                that.$Message.error("提交失败!" + res.data.msg);
+                that.buttonLoading = false;
+              }
+            })
+            .catch(function(error) {
+              that.$Message.error("提交失败！" + error);
+              that.buttonLoading = false;
+            });
+        } else {
+          this.$Message.error("请填写完整信息!");
+        }
+      });
+    },
+    // 获取公司列表
+    getCompany() {
+      var that = this;
+      this.$axios
+        .get(
+          this.imgsrc + "/rock/company/getComapnyList.action",
+          {},
+          {
+            xhrFields: {
+              withCredentials: true
             }
-        },
-        components:{
-            addInfo,addInfo2
-        },
-        created(){
-            this.userId = this.$store.state.token;
-            this.getCompany()
-        },
-        methods: {
-            birthdateValue(e){
-                console.log(e)
-                this.formValidate.birthdate = e
-            },
-            handleSubmit (name) {
-                var that = this;
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                     console.log(valid)
-                    
-                    var param = new URLSearchParams()
-                    param.append('userId',that.userId)
-                    param.append('email',that.formValidate.email)
-                    param.append('realName',that.formValidate.realname)
-                    param.append('idcard',that.formValidate.idcard)
-                    param.append('phone',that.formValidate.call)
-                    param.append('idcardPhoto',this.cardImg)
-                    // param.append('idcardPhoto','http://172.16.201.189:8080/propath/1539237841.jpg')
-                    
-                    param.append('addr',that.formValidate.Address)
-                    param.append('birthdayStr',that.formValidate.birthdate)
-                    param.append('sex',that.formValidate.sex)
-                    param.append('level',that.formValidate.level)
-                    param.append('companyId',that.formValidate.companyId)
-                    param.append('companyInfo.name',that.formValidate.company)
-                    param.append('companyInfo.apt',that.companyImg)
-                    // param.append('companyInfo.apt','http://172.16.201.189:8080/propath/1539237841.jpg')
-                    that.$axios.post(that.imgsrc+'/rock/auth/submitInfo.action',param,{
-                            xhrFields: {
-                                withCredentials: true
-                            }          
-                        })
-                        .then(function(res) {
-                        console.log(res)
-                        if (res.data.code === 0) {
-                            that.btnDis = true;
-                            that.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
-                        //跳到目标页
-                        // this.reload();
-                        that.$router.push("/Home");
-                        } else if (res.data.code === -1) {
-                            that.$Message.error('提交失败!'+res.data.msg);
-                        }
-                        })
-                        .catch(function(error) {
-                        that.$Message.error('提交失败！'+error);
-                        });
-                    } else {
-                        this.$Message.error('请填写完整信息!');
-                    }
-                })
-            },
-            // 获取公司列表
-            getCompany(){
-                var that = this
-                this.$axios.get(this.imgsrc+'/rock/company/getComapnyList.action',{},{
-                    xhrFields: {
-                        withCredentials: true
-                    }          
-                })
-                .then(function(res) {
-                console.log(res)
-                if (res.data.code === 0) {
-                    that.companyList =res.data.list
-                } else if (res.data.code === -1) {
-                    that.$Message.error('提交失败!'+res.data.msg);
-                }
-                })
-                .catch(function(error) {
-                    that.$Message.error('提交失败！'+error);
-                });
-            },
-            handleReset (name) {
-                this.$refs[name].resetFields();
-            },
-            uploadSuccess(res, file){
-                this.$Message.info('上传成功！');
-                this.companyImg = res.path
-            },
-            uploadSuccessId(res, file){
-                this.$Message.info('上传成功！');
-                this.cardImg = res.path
-            },
-            uploadError(res, file){
-                console.log(res,file)
-                this.$Message.error('上传失败！'+res.data.msg);
-            }
-        } 
+          }
+        )
+        .then(function(res) {
+          console.log(res);
+          if (res.data.code === 0) {
+            that.companyList = res.data.list;
+          } else if (res.data.code === -1) {
+            that.$Message.error("提交失败!" + res.data.msg);
+          }
+        })
+        .catch(function(error) {
+          that.$Message.error("提交失败！" + error);
+        });
+    },
+    handleReset(name) {
+      this.$refs[name].resetFields();
+    },
+    uploadSuccess(res, file) {
+      this.$Message.info("上传成功！");
+      this.companyImg = res.path;
+    },
+    uploadSuccessId(res, file) {
+      this.$Message.info("上传成功！");
+      this.cardImg = res.path;
+    },
+    uploadError(res, file) {
+      this.$Message.error("上传失败！" + res.data.msg);
     }
+  }
+};
 </script>
 <style scoped>
-.information{
-    width: 48%;
-    margin-left: 2%;
+.information {
+  width: 48%;
+  margin-left: 2%;
 }
-.btns{
-    text-align: right;
+.btns {
+  text-align: right;
 }
-h3{
-    color: #ff0000;
+h3 {
+  color: #ff0000;
 }
-.infor{
-    width: 98%;
-    margin:0 auto;
+.infor {
+  width: 98%;
+  margin: 0 auto;
 }
 </style>

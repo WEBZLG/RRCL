@@ -1,3 +1,4 @@
+<!--我的视频中视频弹窗-->
 <template>
   <video-player  class="video-player-box"
                  ref="videoPlayer"

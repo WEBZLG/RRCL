@@ -1,3 +1,4 @@
+<!--监控页面的块信息及交易信息-->
 <template>
     <div class="blockTrade">
         <Breadcrumb>

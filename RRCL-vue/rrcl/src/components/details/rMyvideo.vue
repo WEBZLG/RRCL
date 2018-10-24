@@ -1,3 +1,4 @@
+<!--我的视频列表-->
 <template>
     <div>
         <Table border :columns="columns" :data="data"></Table>
@@ -173,6 +174,23 @@ export default {
     // eleLink.click();
     // // 然后移除
     // document.body.removeChild(eleLink);  
+    // function download(url, params) {
+    //   let tempForm = document.createElement('form')
+    //   tempForm.action = url
+    //   tempForm.method = 'get'
+    //   tempForm.style.display = 'none'
+    //   for (var x in params) {
+    //     let opt = document.createElement('textarea')
+    //     opt.name = x
+    //     opt.value = params[x]
+    //     tempForm.appendChild(opt)
+    //   }
+    //   document.body.appendChild(tempForm)
+    //   tempForm.submit()
+    //   return tempForm
+    // }
+    // const url = 'ali-oss-object-url'
+    // download(url)
     },
     downjs(data, strFileName, strMimeType){
         var self = window, // this script is only for browsers anyway...

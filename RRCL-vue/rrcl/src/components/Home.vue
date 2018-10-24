@@ -31,9 +31,7 @@ import vFoot from "./Footer.vue";
 export default {
   name: "Home",
   data() {
-    return {
-      msg: "Welcome to Your Vue.js App"
-    };
+    return {};
   },
   components: {
     vHead,
@@ -42,8 +40,6 @@ export default {
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .ivu-layout .ivu-layout-header {
   background-color: #2d8cf0;

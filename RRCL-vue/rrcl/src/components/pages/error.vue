@@ -1,3 +1,4 @@
+<!--出错页面  暂时无用-->
 <template>
     <div class="error">
         <h1>哎呀！出错了！</h1>

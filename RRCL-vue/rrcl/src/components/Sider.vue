@@ -1,17 +1,18 @@
+<!--侧边导航-->
 <template>
 	<div class="sider">
-        <Menu ref="side_menu" :active-name="setActive" :open-names="[openActive]"  @on-select="routeTo" accordion width="auto">
-            <Submenu :name="item.submenu"  v-for="(item ,index) in menuData" :key="index">
-                <template slot="title">
-                        <Icon :type="item.icon" />
-                        {{item.message}}
-                </template>
-                <MenuItem :name="child.menuitem" v-for="child in item.children" :key="child.menuitem">
-                    <Icon :type="child.icon" />
-                    {{child.message}}
-                </MenuItem>
-            </Submenu>
-        </Menu>
+    <Menu ref="side_menu" :active-name="setActive" :open-names="[openActive]"  @on-select="routeTo" accordion width="auto">
+      <Submenu :name="item.submenu"  v-for="(item ,index) in menuData" :key="index">
+        <template slot="title">
+          <Icon :type="item.icon" />
+          {{item.message}}
+        </template>
+        <MenuItem :name="child.menuitem" v-for="child in item.children" :key="child.menuitem">
+          <Icon :type="child.icon" />
+          {{child.message}}
+        </MenuItem>
+      </Submenu>
+    </Menu>
 	</div>
 </template>
 
@@ -19,11 +20,11 @@
 export default {
   data() {
     return {
-      imgsrc:domain.testUrl,
-      username:'',
+      imgsrc: domain.testUrl,
+      username: "",
       setActive: "",
       openActive: "",
-      menuData:[],
+      menuData: [],
       menuDataList: [
         {
           submenu: "navUploading",
@@ -122,14 +123,10 @@ export default {
       ]
     };
   },
-  computed: {
-    // setActive(){
-    // 	return this.$route.path.replace('/','Uploading');
-    // }
-  },
+  computed: {},
 
   mounted() {
-    this.username = this.$store.state
+    this.username = this.$store.state;
     this.getPersonInformation();
   },
   methods: {
@@ -162,9 +159,6 @@ export default {
       } else if (path.indexOf("/ChainDetails") != -1) {
         this.setActive = "ChainDetails";
         this.openActive = "Chain";
-      } else if (path.indexOf("/Information") != -1) {
-        this.setActive = "Information";
-        this.openActive = "allInformation";
       } else if (path.indexOf("/PersonInfor") != -1) {
         this.setActive = "PersonInfor";
         this.openActive = "allInformation";
@@ -174,10 +168,11 @@ export default {
         this.$refs.side_menu.updateActiveName();
       });
     },
+    // 获取个人信息
     getPersonInformation() {
       var that = this;
       var param = new URLSearchParams();
-      param.append("userName",this.username.user);
+      param.append("userName", this.username.user);
       this.$axios
         .post(this.imgsrc + "/rock/user/getUserInfo.action", param, {
           xhrFields: {
@@ -186,17 +181,22 @@ export default {
         })
         .then(res => {
           switch (res.data.userInfo.level) {
+            // 根据角色不同配置不同导航栏
             case 0:
-              this.menuData = [{
+              this.menuData = [
+                {
                   submenu: "allInformation",
                   icon: "ios-information-circle",
                   message: "信息管理",
-                  children: [{
-                    menuitem: "PersonInfor",
-                    icon: "md-information",
-                    message: "个人信息"
-                  }]
-                }];
+                  children: [
+                    {
+                      menuitem: "PersonInfor",
+                      icon: "md-information",
+                      message: "个人信息"
+                    }
+                  ]
+                }
+              ];
               break;
             case 1:
               this.menuData = this.menuDataList;

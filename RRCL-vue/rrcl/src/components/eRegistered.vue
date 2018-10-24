@@ -1,3 +1,4 @@
+<!--邮箱注册页面-->
 <template>
     <div>
         <Form ref="ruleForm" :model="ruleForm" :rules="rules">
@@ -51,7 +52,7 @@
 <script>
 // import axios from "../axios.js";
 export default {
-  inject:["reload"],
+  inject: ["reload"],
   data() {
     var username = (rule, value, callback) => {
       if (value === "") {
@@ -100,12 +101,12 @@ export default {
       }
     };
     return {
-      imgsrc:domain.testUrl,
-      buttonLoading:false,
-      RbuttonLoading:false,
+      imgsrc: domain.testUrl,
+      buttonLoading: false,
+      RbuttonLoading: false,
       single: true,
-      butText:"获取验证码",
-      registerText:"注册",
+      butText: "获取验证码",
+      registerText: "注册",
       ruleForm: {
         pwd: "",
         checkPass: "",
@@ -157,69 +158,72 @@ export default {
     jump: function() {
       this.$router.push({ path: "/userLogin" });
     },
+    // 获取验证码
     getCode: function() {
-      var that = this
+      var that = this;
       this.buttonLoading = true;
-      this.butText = "Loading"
-      let param = new URLSearchParams()
-      param.append('email',this.ruleForm.email)
-      this.$axios.post(this.imgsrc+'/rock/user/checkEmail.action',param,{
-            xhrFields: {
-                  withCredentials: true
-            }
-          })
-          .then((res)=> {
-            console.log("邮箱"+res)
-              if(res.data.code===0){
-                that.$Message.info('发送成功！');
-                that.buttonLoading = false;
-                that.butText = "获取验证码"
-              }else if(res.data.code===-1){
-                that.$Message.error('发送失败！');
-                that.buttonLoading = false;
-                that.butText = "获取验证码"
-              }
-          })
+      this.butText = "Loading";
+      let param = new URLSearchParams();
+      param.append("email", this.ruleForm.email);
+      this.$axios
+        .post(this.imgsrc + "/rock/user/checkEmail.action", param, {
+          xhrFields: {
+            withCredentials: true
+          }
+        })
+        .then(res => {
+          console.log("邮箱" + res);
+          if (res.data.code === 0) {
+            that.$Message.info("发送成功！");
+            that.buttonLoading = false;
+            that.butText = "获取验证码";
+          } else if (res.data.code === -1) {
+            that.$Message.error("发送失败！");
+            that.buttonLoading = false;
+            that.butText = "获取验证码";
+          }
+        });
     },
     handleSubmit(name) {
-      var that = this
+      var that = this;
       this.RbuttonLoading = true;
-      this.registerText = "Loading"
+      this.registerText = "Loading";
       this.$refs[name].validate(valid => {
         if (valid) {
-          var param = new URLSearchParams()
-          param.append('userName',this.ruleForm.username)
-          param.append('pwd',this.ruleForm.pwd)
-          param.append('email',this.ruleForm.email)
-          param.append('vaildCode',this.ruleForm.vaildCode)
-          this.$axios.post(this.imgsrc+'/rock/user/register.action',param,{
-            xhrFields: {
-                  withCredentials: true
-            }
-          })
-            .then((res)=> {
-              console.log(res)
+          var param = new URLSearchParams();
+          param.append("userName", this.ruleForm.username);
+          param.append("pwd", this.ruleForm.pwd);
+          param.append("email", this.ruleForm.email);
+          param.append("vaildCode", this.ruleForm.vaildCode);
+          this.$axios
+            .post(this.imgsrc + "/rock/user/register.action", param, {
+              xhrFields: {
+                withCredentials: true
+              }
+            })
+            .then(res => {
+              console.log(res);
               if (res.data.code === 0) {
-                that.$Message.info('注册成功！');
+                that.$Message.info("注册成功！");
                 that.$router.push({ path: "/userLogin" });
                 that.RbuttonLoading = false;
                 that.reload();
-                that.registerText = "注册"
+                that.registerText = "注册";
               } else if (res.data.code === -1) {
-                that.$Message.error('注册失败!'+res.data.msg);
+                that.$Message.error("注册失败!" + res.data.msg);
                 that.RbuttonLoading = false;
-                that.registerText = "注册"
+                that.registerText = "注册";
               }
             })
             .catch(function(error) {
-              that.$Message.error('提交失败！');
+              that.$Message.error("提交失败！");
               that.RbuttonLoading = false;
-              that.registerText = "注册"
-              });
+              that.registerText = "注册";
+            });
         } else {
           this.$Message.error("填写数据错误!");
           this.RbuttonLoading = false;
-          this.registerText = "注册"
+          this.registerText = "注册";
         }
       });
     }

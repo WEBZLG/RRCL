@@ -1,3 +1,4 @@
+<!--我的视频授权弹窗-->
 <template>
     <Row>
         <div class="wrapper">
@@ -5,16 +6,6 @@
                 <Icon type="university"></Icon>&nbsp;账户授权
             </h4>
         </div>
-        <!-- <div class="wrapper">
-            <Row>
-                <Col :span="6">
-                    <label for="">管理员账户</label>
-                </Col>
-                <Col :span="18">
-                    <Input v-model="adminValue" @on-change="adminValueChange" disabled></Input>
-                </Col>
-            </Row>
-        </div> -->
         <div class="wrapper">
             <Row>
                 <Col :span="6">
@@ -121,129 +112,127 @@
     </Row>
 </template>
 <script>
-import Vue from 'vue'
-    export default {  
-        name: 'add',
-        data() {
-            return {
-                imgsrc:domain.testUrl,
-                // adminValue:'',
-                otherValue:'',
-                equipmentValue:'',
-                watermarkValue:'',
-                limitsValue:[],
-                playTimeValue:'',
-                playNumValue:'',
-                starValue:'',
-                stopValue:'',
-                overValue:'',
-                typeValue:'0',
-                userList: [],
-                limitsList:[
-                    {
-                        name:'可播放',
-                        value:'play'
-                    },
-                    {
-                        name:'可下载源文件',
-                        value:'downy'
-                    },
-                    {
-                        name:'可下加密文件',
-                        value:'dowmj'
-                    },
-                    {
-                        name:'可授权',
-                        value:'sq'
-                    }
-                ]
-            }
+export default {
+  name: "add",
+  data() {
+    return {
+      imgsrc: domain.testUrl,
+      otherValue: "",
+      equipmentValue: "",
+      watermarkValue: "",
+      limitsValue: [],
+      playTimeValue: "",
+      playNumValue: "",
+      starValue: "",
+      stopValue: "",
+      overValue: "",
+      typeValue: "0",
+      userList: [],
+      limitsList: [
+        {
+          name: "可播放",
+          value: "play"
         },
-        mounted(){
-            this.getUsers()
+        {
+          name: "可下载源文件",
+          value: "downy"
         },
-        methods:{
-            // adminValueChange:function() {
-            //     var obj = this
-            //     this.$emit('adminValueR', obj.adminValue)
-            // },
-            otherValueChange:function() {
-                var obj = this
-                this.$emit('otherValueR', obj.otherValue)
-            },
-            equipmentValueChange:function() {
-                var obj = this
-                this.$emit('equipmentValueR', obj.equipmentValue)
-            },
-           watermarkValueChange:function() {
-                var obj = this
-                this.$emit('watermarkValueR', obj.watermarkValue)
-            },
-            limitsValueChange:function() {
-                var obj = this
-                this.$emit('limitsValueR', obj.limitsValue)
-            },
-            playTimeValueChange:function() {
-                var obj = this
-                this.$emit('playTimeValueR', obj.playTimeValue)
-            },
-            playNumValueChange:function() {
-                var obj = this
-                this.$emit('playNumValueR', obj.playNumValue)
-            },
-            starValueChange:function() {
-                var obj = this
-                this.$emit('starValueR', obj.starValue)
-            },
-           stopValueChange:function() {
-                var obj = this
-                this.$emit('stopValueR', obj.stopValue)
-            },
-            overValueChange:function(e) {
-                var obj = this
-                obj.overValue = e
-                this.$emit('overValueR', obj.overValue)
-            },
-            typeValueChange:function() {
-                var obj = this
-                this.$emit('typeValueR', obj.typeValue)
-            },
-            getUsers(){
-                var that = this
-                this.$axios.post(this.imgsrc+'/rock/user/getUserList.action',{},{
-                        xhrFields: {
-                            withCredentials: true
-                        }          
-                    })
-                    .then(function(res) {
-                        console.log(res)
-                    if (res.data.code === 0) {
-                       that.userList =res.data.list
-                    // this.reload();
-                    } else if (res.data.code === -1) {
-                        Vue.prototype.$Message.error('获取数据失败!'+res.data.msg);
-                    }
-                    })
-                    .catch(function(error) {
-                    Vue.prototype.$Message.error('获取数据失败！'+error);
-                    });
+        {
+          name: "可下加密文件",
+          value: "dowmj"
+        },
+        {
+          name: "可授权",
+          value: "sq"
+        }
+      ]
+    };
+  },
+  mounted() {
+    this.getUsers();
+  },
+  methods: {
+    otherValueChange: function() {
+      var obj = this;
+      this.$emit("otherValueR", obj.otherValue);
+    },
+    equipmentValueChange: function() {
+      var obj = this;
+      this.$emit("equipmentValueR", obj.equipmentValue);
+    },
+    watermarkValueChange: function() {
+      var obj = this;
+      this.$emit("watermarkValueR", obj.watermarkValue);
+    },
+    limitsValueChange: function() {
+      var obj = this;
+      this.$emit("limitsValueR", obj.limitsValue);
+    },
+    playTimeValueChange: function() {
+      var obj = this;
+      this.$emit("playTimeValueR", obj.playTimeValue);
+    },
+    playNumValueChange: function() {
+      var obj = this;
+      this.$emit("playNumValueR", obj.playNumValue);
+    },
+    starValueChange: function() {
+      var obj = this;
+      this.$emit("starValueR", obj.starValue);
+    },
+    stopValueChange: function() {
+      var obj = this;
+      this.$emit("stopValueR", obj.stopValue);
+    },
+    overValueChange: function(e) {
+      var obj = this;
+      obj.overValue = e;
+      this.$emit("overValueR", obj.overValue);
+    },
+    typeValueChange: function() {
+      var obj = this;
+      this.$emit("typeValueR", obj.typeValue);
+    },
+    getUsers() {
+      var that = this;
+      this.$axios
+        .post(
+          this.imgsrc + "/rock/user/getUserList.action",
+          {},
+          {
+            xhrFields: {
+              withCredentials: true
             }
-
-        } 
+          }
+        )
+        .then(function(res) {
+          console.log(res);
+          if (res.data.code === 0) {
+            that.userList = res.data.list;
+            // this.reload();
+          } else if (res.data.code === -1) {
+            that.$Message.error("获取数据失败!" + res.data.msg);
+          }
+        })
+        .catch(function(error) {
+          that.$Message.error("获取数据失败！" + error);
+        });
     }
+  }
+};
 </script>
 <style scoped>
-.modelTitle{
-    position: absolute;
-    top: -26px;
-    left: 0;
-    color: #2d8cf0;
-    display: none;
+.modelTitle {
+  position: absolute;
+  top: -26px;
+  left: 0;
+  color: #2d8cf0;
+  display: none;
 }
-.wrapper{
-    margin-top: 15px;
+.wrapper {
+  margin-top: 15px;
 }
-.ivu-input{
-    color: #2d8cf0;
+.ivu-input {
+  color: #2d8cf0;
 }
 </style>

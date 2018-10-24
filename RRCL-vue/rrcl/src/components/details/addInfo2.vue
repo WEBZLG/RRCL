@@ -1,3 +1,4 @@
+<!--认证信息-普通用户-->
 <template>
     <div class="addInfo">
         <Form ref="formValidate" :model="formValidate" label-position="left" :label-width="100" :rules="ruleValidate">
@@ -30,9 +31,9 @@
                     <Radio label="2">女</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="年龄" prop="age">
+            <!-- <FormItem label="年龄" prop="age">
                 <Input v-model="formValidate.age"></Input>
-            </FormItem>
+            </FormItem> -->
             <FormItem label="联系电话" prop="call">
                 <Input v-model="formValidate.call"></Input>
             </FormItem>
@@ -51,128 +52,129 @@
         </Form>
         <div class="btns">
             <Button type="success" @click="handleReset('formValidate')">重置</Button>
-            <Button type="primary" @click="handleSubmit('formValidate')" :disabled='btnDis'>提交</Button>
+            <Button type="primary" @click="handleSubmit('formValidate')" :disabled='btnDis' :loading = "buttonLoading">提交</Button>
         </div>            
     </div>
 </template>
 <script>
-import Vue from 'vue'
-    export default {
-        inject:["reload"],
-        data () {
-            return {
-                imgsrc:domain.testUrl,
-                credentials: true,
-                btnDis:false,
-                idcardimg:'',
-                userId:'',
-                action:domain.testUrl+'/rock/file/upload.action',
-                formValidate: {
-                    realname: '',
-                    sex: '',
-                    idcard:'',
-                    birthdate:'',
-                    age: '',
-                    call:'',
-                    email:'',
-                    address:'',
-                    // qq:'',
-                    // weixin:'',
-                    level:'6'
-                },
-                ruleValidate: {
-                    realname: [
-                        { required: true, message: '用户名不能为空', trigger: 'blur' }
-                    ],
-                    idcard: [
-                        { required: true, message: '身份证号不能为空', trigger: 'blur' }
-                    ],
-                    birthdate: [
-                        { required: true,  type: 'string', message: '出生日期不能为空', trigger: 'change' }
-                    ],
-                    age: [
-                        { required: true, message: '年龄不能为空', trigger: 'blur' }
-                    ],
-                    sex: [
-                        { required: true, message: '请选择性别', trigger: 'blur' }
-                    ],
-                    call: [
-                        { required: true, message: '联系电话不能为空', trigger: 'blur' },
-                    ],
-                    email: [
-                        { required: true, message: '邮箱不能为空', trigger: 'blur' }
-                    ],
-                    address: [
-                        { required: true, message: '地址不能为空', trigger: 'blur' }
-                    ]
-                }
-            }
-        },
-        created(){
-            this.userId = this.$store.state.token;
-        },
-        methods: {
-            birthdateValue(e){
-                this.formValidate.birthdate = e
-            },
-            handleSubmit (name) {
-                var that = this;
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                    console.log(valid)
-                    var param = new URLSearchParams()
-                    param.append('userId',this.userId)
-                    param.append('email',this.formValidate.email)
-                    param.append('realName',this.formValidate.realname)
-                    param.append('idcard',this.formValidate.idcard)
-                    param.append('idcardPhoto',this.idcardimg)
-                    param.append('phone',this.formValidate.call)
-                    param.append('level',this.formValidate.level)
-                    param.append('addr',this.formValidate.address)
-                    param.append('birthdayStr',this.formValidate.birthdate)
-                    param.append('sex',this.formValidate.sex)
-                    this.$axios.post(this.imgsrc+'/rock/auth/submitInfo.action',param,{
-                            xhrFields: {
-                                withCredentials: true
-                            }          
-                        })
-                        .then(function(res) {
-                        console.log(res)
-                        if (res.data.code === 0) {
-                            that.btnDis = true;
-                            Vue.prototype.$Message.info('提交成功!请耐心等待审核，审核时间为1~3天！');
-                        //跳到目标页
-                        // this.reload();
-                        that.$router.push("/Home");
-                        return false;
-                        } else if (res.data.code === -1) {
-                            Vue.prototype.$Message.error('提交失败!'+res.data.msg);
-                        }
-                        })
-                        .catch(function(error) {
-                            that.$Message.error('提交失败！'+error);
-                        });
-                    } else {
-                        this.$Message.error('请填写完整信息!');
-                    }
-                })
-            },
-            handleReset (name) {
-                this.$refs[name].resetFields();
-            },
-            uploadSuccessId(res, file){
-                this.$Message.info('上传成功！');
-                this.cardImg = res.path
-            },
-            uploadError(res, file){
-                console.log(res,file)
-                this.$Message.error('上传失败！'+res.data.msg);
-            }
-        } 
+export default {
+  inject: ["reload"],
+  data() {
+    return {
+      imgsrc: domain.testUrl,
+      credentials: true,
+      btnDis: false,
+      idcardimg: "",
+      userId: "",
+      buttonLoading: false,
+      action: domain.testUrl + "/rock/file/upload.action",
+      formValidate: {
+        realname: "",
+        sex: "",
+        idcard: "",
+        birthdate: "",
+        age: "",
+        call: "",
+        email: "",
+        address: "",
+        level: "6"
+      },
+      ruleValidate: {
+        realname: [
+          { required: true, message: "用户名不能为空", trigger: "blur" }
+        ],
+        idcard: [
+          { required: true, message: "身份证号不能为空", trigger: "blur" }
+        ],
+        birthdate: [
+          {
+            required: true,
+            type: "string",
+            message: "出生日期不能为空",
+            trigger: "change"
+          }
+        ],
+        age: [{ required: true, message: "年龄不能为空", trigger: "blur" }],
+        sex: [{ required: true, message: "请选择性别", trigger: "blur" }],
+        call: [
+          { required: true, message: "联系电话不能为空", trigger: "blur" }
+        ],
+        email: [{ required: true, message: "邮箱不能为空", trigger: "blur" }],
+        address: [{ required: true, message: "地址不能为空", trigger: "blur" }]
+      }
+    };
+  },
+  created() {
+    this.userId = this.$store.state.token;
+  },
+  methods: {
+    birthdateValue(e) {
+      this.formValidate.birthdate = e;
+    },
+    handleSubmit(name) {
+      var that = this;
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          console.log(valid);
+          that.buttonLoading = true;
+          var param = new URLSearchParams();
+          param.append("userId", this.userId);
+          param.append("email", this.formValidate.email);
+          param.append("realName", this.formValidate.realname);
+          param.append("idcard", this.formValidate.idcard);
+          param.append("idcardPhoto", this.idcardimg);
+          param.append("phone", this.formValidate.call);
+          param.append("level", this.formValidate.level);
+          param.append("addr", this.formValidate.address);
+          param.append("birthdayStr", this.formValidate.birthdate);
+          param.append("sex", this.formValidate.sex);
+          this.$axios
+            .post(this.imgsrc + "/rock/auth/submitInfo.action", param, {
+              xhrFields: {
+                withCredentials: true
+              }
+            })
+            .then(function(res) {
+              console.log(res);
+              if (res.data.code === 0) {
+                that.btnDis = true;
+                that.$Message.info(
+                  "提交成功!请耐心等待审核，审核时间为1~3天！"
+                );
+                that.buttonLoading = false;
+                //跳到目标页
+                that.reload();
+                that.$router.push("/Home");
+              } else if (res.data.code === -1) {
+                that.$Message.error("提交失败!" + res.data.msg);
+                that.buttonLoading = false;
+              }
+            })
+            .catch(function(error) {
+              that.$Message.error("提交失败！" + error);
+              that.buttonLoading = false;
+            });
+        } else {
+          this.$Message.error("请填写完整信息!");
+        }
+      });
+    },
+    handleReset(name) {
+      this.$refs[name].resetFields();
+    },
+    uploadSuccessId(res, file) {
+      this.$Message.info("上传成功！");
+      this.idcardimg = res.path;
+    },
+    uploadError(res, file) {
+      console.log(res, file);
+      this.$Message.error("上传失败！" + res.data.msg);
     }
+  }
+};
 </script>
 <style>
-.btns{
-    text-align: right;
+.btns {
+  text-align: right;
 }
 </style>

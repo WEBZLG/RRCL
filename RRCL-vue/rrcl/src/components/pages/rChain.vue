@@ -1,6 +1,6 @@
+<!--无用-->
 <template>
     <div>
-
         <Table border :columns="columns7" :data="data6"></Table>
         <Page :total="100" show-elevator></Page>
     </div>

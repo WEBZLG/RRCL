@@ -1,3 +1,4 @@
+<!--登录页面-->
 <template>
   <div id="loginBox">
       <Form ref="loginformValidate" :model="loginformValidate" :rules="loginRules">
@@ -33,9 +34,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import store from '../store/index'
-// import axios from "../axios.js";
 export default {
   data() {
     var username = function(rule, value, callback) {
@@ -124,6 +123,7 @@ export default {
     },
     loginSubmit(name) {
       // this.$Spin.show();
+      var that = this
       this.buttonLoading = true;
       this.butText = "Loading"
       var param = this.loginformValidate
@@ -140,29 +140,29 @@ export default {
             .then((res)=> {
               console.log(res)
               if (res.data.code === 0) {
-                Vue.prototype.$Message.info('登录成功！');
-                this.$store.commit('SET_TOKEN', res.data.userInfo.userId)
-                this.$store.commit('GET_USER', res.data.userInfo.userName)
-                this.buttonLoading = false;
-                this.butText = "登录"
-              this.$router.push("/Home");
+                that.$Message.info('登录成功！');
+                that.$store.commit('SET_TOKEN', res.data.userInfo.userId)
+                that.$store.commit('GET_USER', res.data.userInfo.userName)
+                that.buttonLoading = false;
+                that.butText = "登录"
+                that.$router.push("/Home");
               } else if (res.data.code === -1) {
-                Vue.prototype.$Message.error('登录失败!'+res.data.msg);
-                this.buttonLoading = false;
-                this.butText = "登录"
+                that.$Message.error('登录失败!'+res.data.msg);
+                that.buttonLoading = false;
+                that.butText = "登录"
               }
             })
             .catch(function(error) {
-              this.buttonLoading = false;
-              this.butText = "登录"
-              Vue.prototype.$Message.error('提交失败！');
+              that.buttonLoading = false;
+              that.butText = "登录"
+              that.$Message.error('提交失败！');
               });
             }
         else{
           // this.$Spin.hide();
-          Vue.prototype.$Message.error('请填写账户信息！');
-          this.buttonLoading = false;
-          this.butText = "登录"
+          that.$Message.error('请填写账户信息！');
+          that.buttonLoading = false;
+          that.butText = "登录"
         }
         
       });
