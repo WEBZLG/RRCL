@@ -192,6 +192,7 @@ export default {
                 withCredentials: true
             }          
         }).then(function(res) {
+          // console.log(res)
         if (res.data.code === 0) {
           that.$Message.info("提交成功");
           that.reload();

@@ -10,9 +10,11 @@
 					</Sider>
 					<Layout>
 					<Content>
+						 <transition name="move" mode="out-in">
 						<!-- <keep-alive> -->
 							<router-view></router-view>
 						<!-- </keep-alive> -->
+						 </transition>
 					</Content>
 					<!-- <Footer>
 						<v-foot></v-foot>

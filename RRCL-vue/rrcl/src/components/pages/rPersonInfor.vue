@@ -35,11 +35,6 @@
                     </label>
                </div>
                <div>
-                    <label for="addr">
-                        地址：<span>{{this.addr}}</span>
-                    </label>
-               </div>
-               <div>
                     <label for="status">
                         账户认证状态：<span>{{this.status}}</span>
                     </label>
@@ -102,11 +97,11 @@ export default {
           }
         )
         .then(res => {
+          console.log(res)
           this.resver = res
           this.idCard = res.data.userInfo.idcard;
           this.email = res.data.userInfo.email;
           this.phone = res.data.userInfo.phone;
-          this.addr = res.data.userInfo.addr;
           this.realName = res.data.userInfo.realName;
           if (res.data.changeStatus === 1) {
             this.isShow = true;

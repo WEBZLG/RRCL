@@ -3,7 +3,6 @@
     <div>
         <Table border :columns="columns" :data="data"></Table>
         <Page :total="100" show-elevator></Page>
-        <a href="http://172.16.201.189:8080/propath/1539408159.mp4" download="345.mp4">xiazai111</a>
     </div>
 </template>
 <script>
@@ -160,6 +159,7 @@ export default {
     getDownload(params) {
       this.videoParams = params;
       let url = this.videoPath + params.row.path;
+      console.log(typeof(url))
       this.downjs(url,"demo.mp4","video/mp4")
     // var eleLink = document.createElement('a');
     // eleLink.download = filename;

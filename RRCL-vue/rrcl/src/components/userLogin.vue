@@ -222,11 +222,7 @@ h2 {
   margin-bottom: 10px;
   color: #fff;
 }
-/* .ivu-input-type .ivu-input-icon-normal + .ivu-input,
-.ivu-input {
-  background-color: inherit;
-  color: #fff;
-} */
+
 .registerA {
   text-align: center;
 }

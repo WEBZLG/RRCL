@@ -28,6 +28,7 @@
                         </FormItem>
                         <FormItem prop="birthdate" label="出生日期">
                             <DatePicker type="date" placeholder="选择日期" :value="formValidate.birthdate" @on-change="birthdateValue"></DatePicker>
+                            <!-- <DatePicker type="date" placeholder="选择日期" v-model="formValidate.birthdate" @on-change="birthdateValue"></DatePicker> -->
                         </FormItem>
                         <FormItem label="性别" prop="sex">
                             <RadioGroup v-model="formValidate.sex">
@@ -129,7 +130,8 @@ export default {
             required: true,
             type: "string",
             message: "出生日期不能为空",
-            trigger: "change"
+            trigger: "change",
+            // pattern: /.+/
           }
         ],
         age: [{ required: true, message: "年龄不能为空", trigger: "blur" }],
