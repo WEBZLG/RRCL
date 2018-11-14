@@ -183,6 +183,7 @@ export default {
     typeValueChange: function() {
       this.$emit("typeValueR", this.typeValue);
     },
+    // 获取用户
     getUsers() {
       var that = this;
       this.$axios

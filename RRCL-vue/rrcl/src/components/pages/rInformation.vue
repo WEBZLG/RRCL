@@ -36,9 +36,6 @@
                                 <Radio label="2">女</Radio>
                             </RadioGroup>
                         </FormItem>
-                        <!-- <FormItem label="年龄" prop="age">
-                            <Input v-model="formValidate.age"></Input>
-                        </FormItem> -->
                         <FormItem label="公司名称" prop="company">
                             <Input v-model="formValidate.company"></Input>
                         </FormItem>

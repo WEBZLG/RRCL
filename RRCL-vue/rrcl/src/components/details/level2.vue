@@ -144,9 +144,11 @@ export default {
     this.getUserMesssge()
   },
   methods: {
+    //日期格式转换
     birthdateValue(e) {
       this.formValidate.birthdate = e;
     },
+    // 提交数据
     handleSubmit(name) {
       var that = this;
       this.$refs[name].validate(valid => {

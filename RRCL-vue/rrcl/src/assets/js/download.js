@@ -160,3 +160,6 @@
         return true;
     }; /* end download() */
 }));
+export { //很关键
+    download
+}

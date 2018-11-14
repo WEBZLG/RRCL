@@ -31,9 +31,6 @@
                     <Radio label="2">女</Radio>
                 </RadioGroup>
             </FormItem>
-            <!-- <FormItem label="年龄" prop="age">
-                <Input v-model="formValidate.age"></Input>
-            </FormItem> -->
             <FormItem label="联系电话" prop="call">
                 <Input v-model="formValidate.call"></Input>
             </FormItem>
@@ -62,10 +59,10 @@
 </template>
 <script>
 export default {
-  inject: ["reload"],
+  inject: ["reload"],//刷新
   data() {
     return {
-      imgsrc: domain.testUrl,
+      imgsrc: domain.testUrl,//图片地址
       credentials: true,
       btnDis: false,
       buttonLoading: false,
@@ -116,12 +113,13 @@ export default {
   },
   created() {
     this.userId = this.$store.state.token;
-    this.getCompany();
+    this.getCompany();//获取公司列表
   },
   methods: {
     birthdateValue(e) {
       this.formValidate.birthdate = e;
     },
+    //提交信息
     handleSubmit(name) {
       var that = this;
       this.$refs[name].validate(valid => {
@@ -170,6 +168,7 @@ export default {
         }
       });
     },
+    //重置
     handleReset(name) {
       this.$refs[name].resetFields();
     },
